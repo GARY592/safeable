@@ -18,6 +18,29 @@
     </nav>
 
     <h1>Disaster Map</h1>
-    <p>The map will be added here soon.</p>
+    <p>Live disaster updates and safe zones.</p>
+
+    <div id="map"></div>
+
+    <!-- Leaflet.js Library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India, zoom level 5
+
+        // Load OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Example marker (can be replaced with real-time data)
+        L.marker([28.6139, 77.2090]).addTo(map) // New Delhi
+            .bindPopup('Disaster Alert: Flood')
+            .openPopup();
+    </script>
+
 </body>
+    
 </html>
