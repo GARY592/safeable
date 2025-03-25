@@ -57,6 +57,14 @@
     <button onclick="addContact()">Add Contact</button>
 
     <ul id="contacts-list"></ul>
+<button id="sosButton">🚨 SOS Call</button>
+
+<script>
+    document.getElementById("sosButton").addEventListener("click", function() {
+        let emergencyNumber = "9344845765"; // Change this if needed for your country
+        window.location.href = `tel:${emergencyNumber}`;
+    });
+</script>
 
     <script>
         let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
