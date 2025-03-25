@@ -26,19 +26,31 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     
-    <script>
+      <script>
         // Initialize the map
-        var map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India, zoom level 5
+        var map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India
 
         // Load OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Example marker (can be replaced with real-time data)
-        L.marker([28.6139, 77.2090]).addTo(map) // New Delhi
-            .bindPopup('Disaster Alert: Flood')
-            .openPopup();
+        // Fetch real-time earthquake data from USGS API
+        fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson')
+            .then(response => response.json())
+            .then(data => {
+                data.features.forEach(earthquake => {
+                    let coords = earthquake.geometry.coordinates;
+                    let magnitude = earthquake.properties.mag;
+                    let place = earthquake.properties.place;
+                    let time = new Date(earthquake.properties.time).toLocaleString();
+
+                    // Add marker for each earthquake
+                    L.marker([coords[1], coords[0]]).addTo(map)
+                        .bindPopup(`<b>Magnitude:</b> ${magnitude}<br><b>Location:</b> ${place}<br><b>Time:</b> ${time}`);
+                });
+            })
+            .catch(error => console.log("Error fetching earthquake data:", error));
     </script>
 
 </body>
