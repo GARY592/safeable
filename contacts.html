@@ -59,12 +59,36 @@
     <ul id="contacts-list"></ul>
 <button id="sosButton">🚨 SOS Call</button>
 
+<button id="sosButton">🚨 SOS Call</button>
+<button id="sosSmsButton">📩 Send SOS SMS</button>
+
 <script>
     document.getElementById("sosButton").addEventListener("click", function() {
-        let emergencyNumber = "9344845765"; // Change this if needed for your country
+        let emergencyNumber = "9344845765"; // Change for your country
         window.location.href = `tel:${emergencyNumber}`;
     });
+
+    document.getElementById("sosSmsButton").addEventListener("click", function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                let latitude = position.coords.latitude;
+                let longitude = position.coords.longitude;
+                let message = `🚨 EMERGENCY! I need help! My location: https://www.google.com/maps?q=${latitude},${longitude}`;
+                
+                let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+                if (contacts.length > 0) {
+                    let smsNumbers = contacts.map(contact => contact.phone).join(";");
+                    window.location.href = `sms:${smsNumbers}?body=${encodeURIComponent(message)}`;
+                } else {
+                    alert("No emergency contacts saved.");
+                }
+            });
+        } else {
+            alert("Geolocation is not supported on this device.");
+        }
+    });
 </script>
+
 
     <script>
         let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
