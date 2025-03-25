@@ -35,7 +35,8 @@ nav ul li a {
 
 nav ul li a:hover {
     text-decoration: underline;
-}#map {
+}
+#map {
     height: 500px;
     width: 100%;
     margin-top: 20px;
