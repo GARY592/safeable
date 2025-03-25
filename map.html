@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disaster Alerts Map</title>
+    <title>Live Map + Disaster Alerts</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
@@ -12,25 +12,46 @@
     </style>
 </head>
 <body>
-    <h2>Real-Time Disaster Alerts 🌍⚠️</h2>
+    <h2>Live Location + Real-Time Disaster Alerts 🌍⚠️</h2>
     <button onclick="fetchDisasterAlerts()">Update Alerts</button>
     <div id="map"></div>
 
     <script>
-        let map = L.map('map').setView([20, 78], 4); // Centered on India
+        let map = L.map('map').setView([20, 78], 4); // Default view (India)
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
+        let userMarker = L.marker([0, 0]).addTo(map).bindPopup("Your Location");
+        
+        // Get Live User Location
+        function updateLocation(position) {
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+            userMarker.setLatLng([lat, lon]).openPopup();
+            map.setView([lat, lon], 6);
+        }
+        
+        function errorHandler(error) {
+            console.error("Error getting location:", error);
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(updateLocation, errorHandler);
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+
+        // Fetch Real-Time Disaster Alerts
         async function fetchDisasterAlerts() {
-            let response = await fetch("https://www.gdacs.org/xml/rss.xml"); // Free disaster alert API
+            let response = await fetch("https://www.gdacs.org/xml/rss.xml");
             let data = await response.text();
             let parser = new DOMParser();
             let xml = parser.parseFromString(data, "text/xml");
             let items = xml.getElementsByTagName("item");
 
-            map.eachLayer(layer => { if (layer instanceof L.Marker) map.removeLayer(layer); });
+            map.eachLayer(layer => { if (layer instanceof L.Marker && layer !== userMarker) map.removeLayer(layer); });
 
             for (let i = 0; i < items.length; i++) {
                 let title = items[i].getElementsByTagName("title")[0].textContent;
