@@ -3,21 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map - Safeable</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Emergency Contacts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        #contacts-list {
+            list-style: none;
+            padding: 0;
+        }
+        .contact {
+            background: white;
+            padding: 10px;
+            margin: 10px auto;
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .contact button {
+            margin-left: 10px;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .call-btn {
+            background: green;
+            color: white;
+        }
+        .delete-btn {
+            background: red;
+            color: white;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="map.html">Map</a></li>
-            <li><a href="chatbot.html">AI Chatbot</a></li>
-            <li><a href="contacts.html">Emergency Contacts</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
-    </nav>
+    <h2>Emergency Contacts 📞</h2>
+    <input type="text" id="name" placeholder="Contact Name">
+    <input type="text" id="phone" placeholder="Phone Number">
+    <input type="text" id="relation" placeholder="Relationship">
+    <button onclick="addContact()">Add Contact</button>
 
-    <h1>Emergency Contacts</h1>
-    <p>Emergency Contacts will be added here soon.</p>
+    <ul id="contacts-list"></ul>
+
+    <script>
+        let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+
+        function displayContacts() {
+            let list = document.getElementById("contacts-list");
+            list.innerHTML = "";
+            contacts.forEach((contact, index) => {
+                list.innerHTML += `
+                    <li class="contact">
+                        <span>${contact.name} (${contact.relation}) - ${contact.phone}</span>
+                        <button class="call-btn" onclick="callContact('${contact.phone}')">📞 Call</button>
+                        <button class="delete-btn" onclick="deleteContact(${index})">❌ Delete</button>
+                    </li>
+                `;
+            });
+        }
+
+        function addContact() {
+            let name = document.getElementById("name").value;
+            let phone = document.getElementById("phone").value;
+            let relation = document.getElementById("relation").value;
+            if (name && phone && relation) {
+                contacts.push({ name, phone, relation });
+                localStorage.setItem("contacts", JSON.stringify(contacts));
+                displayContacts();
+                document.getElementById("name").value = "";
+                document.getElementById("phone").value = "";
+                document.getElementById("relation").value = "";
+            } else {
+                alert("Please fill all fields.");
+            }
+        }
+
+        function deleteContact(index) {
+            contacts.splice(index, 1);
+            localStorage.setItem("contacts", JSON.stringify(contacts));
+            displayContacts();
+        }
+
+        function callContact(phone) {
+            window.location.href = `tel:${phone}`;
+        }
+
+        displayContacts();
+    </script>
 </body>
 </html>
