@@ -29,6 +29,43 @@
       <script>
         // Initialize the map
         var map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India
+        // Add a marker for the user's location
+        function locateUser() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    position => {
+                        let userLat = position.coords.latitude;
+                        let userLng = position.coords.longitude;
+
+                        // Remove existing user marker if any
+                        if (window.userMarker) {
+                            map.removeLayer(window.userMarker);
+                        }
+
+                        // Add a new marker for the user's location
+                        window.userMarker = L.marker([userLat, userLng], {
+                            icon: L.icon({
+                                iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Map_marker.svg',
+                                iconSize: [30, 30]
+                            })
+                        }).addTo(map)
+                        .bindPopup("You are here")
+                        .openPopup();
+
+                        // Center the map on the user's location
+                        map.setView([userLat, userLng], 10);
+                    },
+                    error => {
+                        console.log("Error getting location:", error);
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        // Call the function when the page loads
+        locateUser();
 
         // Load OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
