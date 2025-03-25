@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Map + Disaster Alerts</title>
+    <title>Live Map + Voice Disaster Alerts</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
@@ -12,19 +12,19 @@
     </style>
 </head>
 <body>
-    <h2>Live Location + Real-Time Disaster Alerts 🌍⚠️</h2>
+    <h2>Live Location + Voice Disaster Alerts 🌍🔊</h2>
     <button onclick="fetchDisasterAlerts()">Update Alerts</button>
     <div id="map"></div>
 
     <script>
-        let map = L.map('map').setView([20, 78], 4); // Default view (India)
+        let map = L.map('map').setView([20, 78], 4);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
         let userMarker = L.marker([0, 0]).addTo(map).bindPopup("Your Location");
-        
+
         // Get Live User Location
         function updateLocation(position) {
             let lat = position.coords.latitude;
@@ -32,7 +32,7 @@
             userMarker.setLatLng([lat, lon]).openPopup();
             map.setView([lat, lon], 6);
         }
-        
+
         function errorHandler(error) {
             console.error("Error getting location:", error);
         }
@@ -43,7 +43,7 @@
             alert("Geolocation is not supported by your browser.");
         }
 
-        // Fetch Real-Time Disaster Alerts
+        // Fetch Disaster Alerts & Speak them
         async function fetchDisasterAlerts() {
             let response = await fetch("https://www.gdacs.org/xml/rss.xml");
             let data = await response.text();
@@ -53,20 +53,34 @@
 
             map.eachLayer(layer => { if (layer instanceof L.Marker && layer !== userMarker) map.removeLayer(layer); });
 
+            let alertText = "Latest disaster alerts: ";
+
             for (let i = 0; i < items.length; i++) {
                 let title = items[i].getElementsByTagName("title")[0].textContent;
                 let lat = parseFloat(items[i].getElementsByTagName("geo:lat")[0]?.textContent || 0);
                 let lon = parseFloat(items[i].getElementsByTagName("geo:long")[0]?.textContent || 0);
-                
+
+                alertText += title + ". ";
+
                 if (lat && lon) {
                     L.marker([lat, lon]).addTo(map)
                         .bindPopup(`<b>${title}</b>`)
                         .openPopup();
                 }
             }
+
+            speakAlert(alertText);
         }
 
-        fetchDisasterAlerts(); // Load alerts on page load
+        function speakAlert(text) {
+            let speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            speech.rate = 1;
+            speech.pitch = 1;
+            window.speechSynthesis.speak(speech);
+        }
+
+        fetchDisasterAlerts();
     </script>
 </body>
 </html>
