@@ -3,21 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map - Safeable</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Safeable AI Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #chatbox {
+            width: 80%;
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: auto;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: left;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="map.html">Map</a></li>
-            <li><a href="chatbot.html">AI Chatbot</a></li>
-            <li><a href="contacts.html">Emergency Contacts</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
-    </nav>
+    <h2>Safeable AI Chatbot</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type your question...">
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="startVoice()">🎤 Voice Command</button>
 
-    <h1>AI Chatbot</h1>
-    <p>AI Chatbot will be added here soon.</p>
+    <script>
+       const responses = {
+    "hello": "Hi! How can I assist you during an emergency?",
+    "help": "If you need immediate help, call emergency services (like 911) or go to the nearest shelter.",
+    
+    // 🚑 First Aid  
+    "bleeding": "Apply direct pressure with a clean cloth. If bleeding is severe, keep applying pressure and seek medical help.",
+    "fracture": "Do not move the injured limb. Immobilize it with a splint or a rolled-up newspaper.",
+    "burn": "Hold the burn under cool running water for 10 minutes. Do not apply ice or ointments.",
+    "cpr": "If the person is not breathing, start chest compressions: 30 pushes hard and fast in the center of the chest, then 2 rescue breaths.",
+    "choking": "If they can't breathe, perform the Heimlich maneuver: stand behind them and give quick, upward abdominal thrusts.",
+    
+    // 🌍 Natural Disasters  
+    "earthquake": "Drop to the ground, take cover under a sturdy object, and hold on until shaking stops.",
+    "fire": "Evacuate immediately. Stay low to avoid smoke. If trapped, signal for help from a window.",
+    "flood": "Move to higher ground. Do not walk or drive through floodwaters.",
+    "hurricane": "Secure loose objects, stay indoors, and avoid windows. Have an emergency kit ready.",
+    "tornado": "Go to a basement or interior room without windows. Cover yourself with a mattress or heavy blankets.",
+    
+    // 🆘 Emergency Tips  
+    "evacuation": "Know your nearest shelter location. Keep an emergency kit with food, water, and medical supplies.",
+    "emergency kit": "Your emergency kit should include food, water, flashlight, first-aid kit, and important documents.",
+    "finding shelter": "Look for official emergency shelters or community centers. If none are available, stay in a safe and secure building."
+};
+
+
+        function sendMessage() {
+            let input = document.getElementById("userInput").value.toLowerCase();
+            let chatbox = document.getElementById("chatbox");
+
+            chatbox.innerHTML += `<p><b>You:</b> ${input}</p>`;
+
+            let reply = responses[input] || "Sorry, I don’t understand. Try asking about first aid, fire, or earthquakes.";
+            chatbox.innerHTML += `<p><b>Bot:</b> ${reply}</p>`;
+
+            // Convert bot response to speech
+            let speech = new SpeechSynthesisUtterance(reply);
+            window.speechSynthesis.speak(speech);
+
+            document.getElementById("userInput").value = "";
+        }
+
+        function startVoice() {
+            let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                let voiceInput = event.results[0][0].transcript.toLowerCase();
+                document.getElementById("userInput").value = voiceInput;
+                sendMessage();
+            };
+        }
+    </script>
 </body>
 </html>
