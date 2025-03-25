@@ -7,25 +7,84 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #map { height: 500px; width: 100%; margin-top: 10px; }
+        :root {
+            --bg-light: #ffffff;
+            --bg-dark: #1e1e1e;
+            --text-light: #000000;
+            --text-dark: #ffffff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        #map {
+            height: 500px;
+            width: 90%;
+            margin: 10px auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .update-btn {
+            background: #ff4444;
+            color: white;
+        }
+
+        .theme-btn {
+            background: #4444ff;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
     </style>
 </head>
 <body>
     <h2>Live Location + Voice Disaster Alerts 🌍🔊</h2>
-    <button onclick="fetchDisasterAlerts()">Update Alerts</button>
+    <div class="button-container">
+        <button class="update-btn" onclick="fetchDisasterAlerts()">Update Alerts</button>
+        <button class="theme-btn" onclick="toggleTheme()">Dark Mode 🌙</button>
+    </div>
     <div id="map"></div>
 
     <script>
         let map = L.map('map').setView([20, 78], 4);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        let lightTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
+        let darkTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors & CARTO'
+        });
+
         let userMarker = L.marker([0, 0]).addTo(map).bindPopup("Your Location");
 
-        // Get Live User Location
         function updateLocation(position) {
             let lat = position.coords.latitude;
             let lon = position.coords.longitude;
@@ -43,7 +102,6 @@
             alert("Geolocation is not supported by your browser.");
         }
 
-        // Fetch Disaster Alerts & Speak them
         async function fetchDisasterAlerts() {
             let response = await fetch("https://www.gdacs.org/xml/rss.xml");
             let data = await response.text();
@@ -78,6 +136,23 @@
             speech.rate = 1;
             speech.pitch = 1;
             window.speechSynthesis.speak(speech);
+        }
+
+        function toggleTheme() {
+            let body = document.body;
+            let themeBtn = document.querySelector('.theme-btn');
+
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                lightTile.addTo(map);
+                darkTile.remove();
+                themeBtn.textContent = "Dark Mode 🌙";
+            } else {
+                body.classList.add('dark-mode');
+                darkTile.addTo(map);
+                lightTile.remove();
+                themeBtn.textContent = "Light Mode ☀️";
+            }
         }
 
         fetchDisasterAlerts();
