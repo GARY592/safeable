@@ -3,118 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map - Safeable</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="map.html">Map</a></li>
-            <li><a href="chatbot.html">AI Chatbot</a></li>
-            <li><a href="contacts.html">Emergency Contacts</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
-    </nav>
-
-    <h1>Disaster Map</h1>
-    <p>Live disaster updates and safe zones.</p>
-
-    <div id="map"></div>
-
-    <!-- Leaflet.js Library -->
+    <title>Disaster Alerts Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    
-      <script>
-        // Initialize the map
-        var map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India
-        // Add a marker for the user's location
-        function locateUser() {
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(
-                    position => {
-                        let userLat = position.coords.latitude;
-                        let userLng = position.coords.longitude;
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #map { height: 500px; width: 100%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Real-Time Disaster Alerts 🌍⚠️</h2>
+    <button onclick="fetchDisasterAlerts()">Update Alerts</button>
+    <div id="map"></div>
 
-                        // Remove existing user marker if any
-                        if (window.userMarker) {
-                            map.removeLayer(window.userMarker);
-                        }
+    <script>
+        let map = L.map('map').setView([20, 78], 4); // Centered on India
 
-                        // Add a new marker for the user's location
-                        window.userMarker = L.marker([userLat, userLng], {
-                            icon: L.icon({
-                                iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Map_marker.svg',
-                                iconSize: [30, 30]
-                            })
-                        }).addTo(map)
-                        .bindPopup("You are here")
-                        .openPopup();
-
-                        // Center the map on the user's location
-                        map.setView([userLat, userLng], 10);
-                    },
-                    error => {
-                        console.log("Error getting location:", error);
-                    }
-                );
-            } else {
-                alert("Geolocation is not supported by your browser.");
-            }
-        }
-
-        // Call the function when the page loads
-        locateUser();
-        // Example list of safe zones (replace with real data later)
-        let safeZones = [
-            { name: "Community Shelter", lat: 28.6448, lng: 77.2167 },
-            { name: "City Hospital", lat: 11.671253, lng:  78.162144 },
-            { name: "Emergency Relief Center", lat: 28.6304, lng: 77.2177 }
-        ];
-
-        // Function to add safe zone markers
-        function addSafeZones() {
-            safeZones.forEach(zone => {
-                L.marker([zone.lat, zone.lng], {
-                    icon: L.icon({
-                        iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Red_Circle.svg',
-                        iconSize: [20, 20]
-                    })
-                }).addTo(map)
-                .bindPopup(`<b>${zone.name}</b><br>Click for directions`)
-                .on('click', function () {
-                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${zone.lat},${zone.lng}`, '_blank');
-                });
-            });
-        }
-
-        // Call the function to add safe zones
-        addSafeZones();
-
-        // Load OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Fetch real-time earthquake data from USGS API
-        fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson')
-            .then(response => response.json())
-            .then(data => {
-                data.features.forEach(earthquake => {
-                    let coords = earthquake.geometry.coordinates;
-                    let magnitude = earthquake.properties.mag;
-                    let place = earthquake.properties.place;
-                    let time = new Date(earthquake.properties.time).toLocaleString();
+        async function fetchDisasterAlerts() {
+            let response = await fetch("https://www.gdacs.org/xml/rss.xml"); // Free disaster alert API
+            let data = await response.text();
+            let parser = new DOMParser();
+            let xml = parser.parseFromString(data, "text/xml");
+            let items = xml.getElementsByTagName("item");
 
-                    // Add marker for each earthquake
-                    L.marker([coords[1], coords[0]]).addTo(map)
-                        .bindPopup(`<b>Magnitude:</b> ${magnitude}<br><b>Location:</b> ${place}<br><b>Time:</b> ${time}`);
-                });
-            })
-            .catch(error => console.log("Error fetching earthquake data:", error));
+            map.eachLayer(layer => { if (layer instanceof L.Marker) map.removeLayer(layer); });
+
+            for (let i = 0; i < items.length; i++) {
+                let title = items[i].getElementsByTagName("title")[0].textContent;
+                let lat = parseFloat(items[i].getElementsByTagName("geo:lat")[0]?.textContent || 0);
+                let lon = parseFloat(items[i].getElementsByTagName("geo:long")[0]?.textContent || 0);
+                
+                if (lat && lon) {
+                    L.marker([lat, lon]).addTo(map)
+                        .bindPopup(`<b>${title}</b>`)
+                        .openPopup();
+                }
+            }
+        }
+
+        fetchDisasterAlerts(); // Load alerts on page load
     </script>
-
 </body>
-    
 </html>
