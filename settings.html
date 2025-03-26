@@ -3,21 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map - Safeable</title>
+    <title>Safeable - Privacy & Settings</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="map.html">Map</a></li>
-            <li><a href="chatbot.html">AI Chatbot</a></li>
-            <li><a href="contacts.html">Emergency Contacts</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
-    </nav>
+    <h1>🔒 Privacy & Settings</h1>
 
-    <h1> Settings</h1>
-    <p> Settings will be added here soon.</p>
+    <h2>🔹 Enable Anonymous Mode</h2>
+    <label>
+        <input type="checkbox" id="anonymousMode">
+        Hide my identity
+    </label>
+
+    <h2>🔹 Share Location with Emergency Services</h2>
+    <label>
+        <input type="checkbox" id="shareLocation">
+        Allow location sharing
+    </label>
+
+    <h2>🔹 Allow Data Collection</h2>
+    <label>
+        <input type="checkbox" id="dataCollection">
+        Enable crash reports & analytics
+    </label>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const settings = {
+                anonymousMode: localStorage.getItem("anonymousMode") === "true",
+                shareLocation: localStorage.getItem("shareLocation") === "true",
+                dataCollection: localStorage.getItem("dataCollection") === "true",
+            };
+
+            document.getElementById("anonymousMode").checked = settings.anonymousMode;
+            document.getElementById("shareLocation").checked = settings.shareLocation;
+            document.getElementById("dataCollection").checked = settings.dataCollection;
+
+            document.getElementById("anonymousMode").addEventListener("change", function () {
+                localStorage.setItem("anonymousMode", this.checked);
+            });
+
+            document.getElementById("shareLocation").addEventListener("change", function () {
+                localStorage.setItem("shareLocation", this.checked);
+            });
+
+            document.getElementById("dataCollection").addEventListener("change", function () {
+                localStorage.setItem("dataCollection", this.checked);
+            });
+        });
+    </script>
 </body>
 </html>
