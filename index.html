@@ -43,48 +43,43 @@
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="map.html">Map</a></li>
-            <li><a href="chatbot.html">AI Chatbot</a></li>
-            <li><a href="contacts.html">Emergency Contacts</a></li>
-            <li><a href="settings.html">Settings</a></li>
-            <button id="contrastToggle">Toggle High Contrast</button>
-
-        </ul>
-    </nav>
-
-    <div class="container">
-        <h1>Welcome to Safeable</h1>
-        <p>Your ultimate AI-powered disaster management app.</p>
-        <a href="map.html" class="feature-btn map-btn">🗺️ Live Map</a>
-        <a href="contacts.html" class="feature-btn contacts-btn">📞 Emergency Contacts</a>
-        <a href="chatbot.html" class="feature-btn ai-btn">🤖 AI Chatbot</a>
-        <a href="voice.html" class="feature-btn voice-btn">🎤 Voice Commands</a>
-        <a href="settings.html" class="feature-btn settings-btn">⚙️ Privacy & Settings</a>
+  <body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="#">🏠 Home</a>
+        <a href="#">🗺️ Map</a>
+        <a href="#">🤖 AI Chatbot</a>
+        <a href="#">📞 Emergency Contacts</a>
+        <a href="#">⚙️ Settings</a>
     </div>
-    <script>
-document.getElementById("contrastToggle").addEventListener("click", function() {
-    document.body.classList.toggle("high-contrast");
-});
-</script>
-    <script>
-function speak(text) {
-    const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = "en-US";
-    speech.rate = 1; 
-    speech.pitch = 1;
-    window.speechSynthesis.speak(speech);
-}
 
-// Read out welcome message when page loads
-window.onload = () => speak("Welcome to Safeable. Say 'help' to hear available voice commands.");
-</script>
-<script src="voiceCommands.js"></script>
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Welcome to Safeable</h1>
+        
+        <div class="card">
+            <button class="live-map"><i>🗺️</i> Live Map</button>
+        </div>
 
+        <div class="card">
+            <button class="emergency-contacts"><i>📞</i> Emergency Contacts</button>
+        </div>
 
+        <div class="card">
+            <button class="ai-chatbot"><i>🤖</i> AI Chatbot</button>
+        </div>
+
+        <div class="card">
+            <button class="voice-commands"><i>🎤</i> Voice Commands</button>
+        </div>
+
+        <div class="card">
+            <button class="privacy-settings"><i>🔒</i> Privacy & Settings</button>
+        </div>
+    </div>
 </body>
+
+
     <script>
 const commands = {
     "go to home": () => window.location.href = "index.html",
