@@ -3,8 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safeable - Disaster Management App</title>
+    <title>Safeable - Home</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .feature-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+        .map-btn { background: #007bff; }
+        .contacts-btn { background: #28a745; }
+        .ai-btn { background: #ff5733; }
+        .voice-btn { background: #ff9f00; }
+        .settings-btn { background: #6c757d; }
+        .feature-btn:hover { opacity: 0.8; }
+    </style>
 </head>
 <body>
     <nav>
@@ -17,8 +53,14 @@
         </ul>
     </nav>
 
-    <h1>Welcome to Safeable</h1>
-    <p>Your ultimate AI-powered disaster management app.</p>
+    <div class="container">
+        <h1>Welcome to Safeable</h1>
+        <p>Your ultimate AI-powered disaster management app.</p>
+        <a href="map.html" class="feature-btn map-btn">🗺️ Live Map</a>
+        <a href="contacts.html" class="feature-btn contacts-btn">📞 Emergency Contacts</a>
+        <a href="chatbot.html" class="feature-btn ai-btn">🤖 AI Chatbot</a>
+        <a href="voice.html" class="feature-btn voice-btn">🎤 Voice Commands</a>
+        <a href="settings.html" class="feature-btn settings-btn">⚙️ Privacy & Settings</a>
+    </div>
 </body>
-
 </html>
