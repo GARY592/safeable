@@ -1,102 +1,80 @@
-/* 🌟 Ultimate Modern UI for Safeable App */
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
+/* Global Styles */
 body {
-    background: linear-gradient(135deg, #1e1e1e, #2b2b2b);
-    font-family: 'Poppins', sans-serif;
-    color: white;
-    display: flex;
-    height: 100vh;
-    margin: 0;
+  background-color: #121212;
+  color: #E0E0E0;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* 🌟 Sidebar Navigation */
-.sidebar {
-    width: 250px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(12px);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-    border-right: 2px solid rgba(255, 255, 255, 0.2);
+/* Section Styling */
+.privacy-section {
+  background-color: #1E1E1E;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin: 20px;
 }
 
-.sidebar a {
-    text-decoration: none;
-    color: #00d4ff;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 15px 20px;
-    width: 100%;
-    text-align: center;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
+/* Headings */
+.privacy-heading {
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.sidebar a:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #ff4b2b;
+/* Subtext */
+.privacy-subtext {
+  font-size: 14px;
+  color: #A0A0A0;
 }
 
-/* 🌟 Main Content */
-.main-content {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 30px;
+/* Toggle Container */
+.toggle-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #292929;
 }
 
-/* 🌟 Cards for Buttons */
-.card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0px 10px 25px rgba(0, 212, 255, 0.1);
-    width: 350px;
-    margin: 10px 0;
-    text-align: center;
-    transition: transform 0.3s ease-in-out;
+/* Toggles */
+input[type="checkbox"] {
+  appearance: none;
+  width: 42px;
+  height: 22px;
+  background: #444;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
 }
 
-.card:hover {
-    transform: scale(1.05);
+input[type="checkbox"]:checked {
+  background: #007AFF;
 }
 
-/* 🌟 Buttons Inside Cards */
-.card button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 15px;
-    border-radius: 50px;
-    transition: all 0.3s ease-in-out;
+input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #FFF;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: 0.3s ease-in-out;
 }
 
-/* 🎨 Button Colors */
-.live-map { background: #007bff; }
-.emergency-contacts { background: #28a745; }
-.ai-chatbot { background: #ff4b2b; }
-.voice-commands { background: #ff9800; }
-.privacy-settings { background: #6c757d; }
-
-.card button:hover {
-    opacity: 0.8;
+input[type="checkbox"]:checked::before {
+  left: 22px;
 }
 
-/* 🔘 Icon Styling */
-.card button i {
-    margin-right: 10px;
+/* Emergency Warning */
+.emergency-warning {
+  color: #FF4D4D;
+  font-weight: bold;
 }
