@@ -1,79 +1,109 @@
-/* ULTIMATE SUPER LEGENDARY UI UPGRADE 🚀🔥 */
+/* 🚀 PROFESSIONAL & FUTURISTIC UI UPGRADE 🌌 */
 
-/* 🌟 Apply a smooth, glassmorphic background */
+/* 🌑 Dark Mode with Subtle Gradient */
 body {
-    background: linear-gradient(135deg, #141E30, #243B55);
-    font-family: 'Poppins', sans-serif;
-    color: white;
+    background: #121212; /* Deep dark */
+    font-family: 'Inter', sans-serif;
+    color: #e0e0e0;
     text-align: center;
     padding: 20px;
 }
 
-/* 🎨 Make the suggestion box look futuristic */
+/* 🔵 Navbar Styling */
+nav {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #b0b0b0;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+nav ul li a:hover {
+    color: #00d4ff;
+}
+
+/* 📌 Suggestion Box */
 #suggestion-box {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 15px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    gap: 12px;
 }
 
-/* 🛠️ 3D Effect Buttons */
+/* ✅ Buttons: Modern with Hover Effects */
 #suggestion-box button {
-    background: linear-gradient(135deg, #ff416c, #ff4b2b);
-    color: white;
-    font-size: 16px;
+    background: #00d4ff;
+    color: #121212;
+    font-size: 14px;
     font-weight: bold;
-    padding: 12px 18px;
-    border-radius: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 5px 15px rgba(255, 75, 59, 0.4);
+    box-shadow: 0px 4px 10px rgba(0, 212, 255, 0.4);
 }
 
 #suggestion-box button:hover {
-    transform: translateY(-5px) scale(1.1);
-    box-shadow: 0 10px 20px rgba(255, 75, 59, 0.6);
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 15px rgba(0, 212, 255, 0.6);
 }
 
-/* 💬 Chatbot Input Styling */
+/* 📝 Chat Input Styling */
 #user-input {
-    width: calc(100% - 100px);
-    padding: 15px;
-    font-size: 18px;
-    border: 2px solid #00d2ff;
-    background: rgba(255, 255, 255, 0.1);
+    width: 80%;
+    max-width: 600px;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #00d4ff;
+    background: #1e1e1e;
     color: white;
-    border-radius: 10px;
+    border-radius: 8px;
     outline: none;
     transition: 0.3s;
 }
 
 #user-input:focus {
     border-color: #ff4b2b;
-    box-shadow: 0 0 10px rgba(255, 75, 59, 0.6);
 }
 
-/* 🚀 Super Legendary Send Button */
+/* 🚀 Send Button */
 #send-button {
-    background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+    background: #ff4b2b;
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
-    padding: 15px 20px;
-    border-radius: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+    box-shadow: 0px 4px 10px rgba(255, 75, 59, 0.4);
 }
 
 #send-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 10px 20px rgba(0, 210, 255, 0.6);
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 15px rgba(255, 75, 59, 0.6);
 }
