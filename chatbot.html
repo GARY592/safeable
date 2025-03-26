@@ -68,17 +68,27 @@
         return "Calling emergency contact...";
     }
     return "I'm still learning. Can you rephrase?";
+} async function translateText(text, targetLang) {
+    const response = await fetch(`https://api.mymemory.translated.net/get?q=${text}&langpair=en|${targetLang}`);
+    const data = await response.json();
+    return data.responseData.translatedText;
 }
 
 
-        function sendMessage() {
-            const input = document.getElementById("userInput").value;
-            if (input.trim() !== "") {
-                displayMessage("You", input);
-                chatbotResponse(input);
-                document.getElementById("userInput").value = "";
-            }
-        }
+
+       async function sendMessage() {
+    const input = document.getElementById("userInput").value;
+    if (input.trim() !== "") {
+        displayMessage("You", input);
+        const response = generateReply(input);
+        
+        // Translate chatbot's response before displaying it
+        const translatedResponse = await translateText(response, "es"); // "es" = Spanish. Change to another language if needed.
+
+        displayMessage("Bot", translatedResponse);
+        document.getElementById("userInput").value = "";
+    }
+}
 
         function displayMessage(sender, text) {
             const chatbox = document.getElementById("chatbox");
