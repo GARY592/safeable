@@ -77,6 +77,31 @@
             <button class="privacy-settings"><i>🔒</i> Privacy & Settings</button>
         </div>
     </div>
+      <script src="script.js">// Wait for the page to load
+document.addEventListener("DOMContentLoaded", function () {
+    // Add click event to buttons
+    document.querySelector(".live-map").addEventListener("click", function () {
+        window.location.href = "map.html";  // Change to your actual page
+    });
+
+    document.querySelector(".emergency-contacts").addEventListener("click", function () {
+        window.location.href = "contacts.html";  // Change this to your contacts page
+    });
+
+    document.querySelector(".ai-chatbot").addEventListener("click", function () {
+        window.location.href = "chatbot.html";  // Link to chatbot page
+    });
+
+    document.querySelector(".voice-commands").addEventListener("click", function () {
+        window.location.href = "voice.html";  // Link to voice commands page
+    });
+
+    document.querySelector(".privacy-settings").addEventListener("click", function () {
+        window.location.href = "settings.html";  // Link to settings page
+    });
+});
+</script>
+
 </body>
 
 
