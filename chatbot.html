@@ -1,9 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Safeable AI Chatbot</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands"></script>
     <link rel="stylesheet" href="style.css">
     <style>
         body {
@@ -18,9 +23,6 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
         }
         #chatbox {
             width: 100%;
@@ -42,6 +44,10 @@
             border: none;
             cursor: pointer;
         }
+        video {
+            width: 100%;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -57,49 +63,37 @@
     </nav>
 
     <div class="container">
-        <h1>AI Chatbot (Self-Learning)</h1>
+        <h1>AI Chatbot (Offline + Sign Language)</h1>
         <div id="chatbox">
             <p><strong>Bot:</strong> Hello! How can I assist you in this emergency?</p>
         </div>
-        <input type="text" id="userInput" placeholder="Type or use voice...">
+        <input type="text" id="userInput" placeholder="Type or use sign language...">
         <button onclick="sendMessage()">Send</button>
         <button onclick="startVoiceInput()">🎤 Voice</button>
+        <button onclick="startSignRecognition()">✋ Sign Language</button>
     </div>
 
-    <script>
-        // Load previous conversations from storage
-        let chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    <video id="video" autoplay></video>
 
-        function updateChatHistory(userMessage, botMessage) {
-            chatHistory.push({ user: userMessage, bot: botMessage });
-            if (chatHistory.length > 20) chatHistory.shift(); // Keep last 20 chats
-            localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+    <script>
+        async function loadAI() {
+            window.qna = await qna.load();
+            window.handpose = await handpose.load();
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             var input = document.getElementById("userInput").value;
             var chatbox = document.getElementById("chatbox");
 
             if (input.trim() !== "") {
                 chatbox.innerHTML += `<p><strong>You:</strong> ${input}</p>`;
 
-                fetch("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium", {
-                    method: "POST",
-                    headers: { "Authorization": "Bearer FREE_API_KEY", "Content-Type": "application/json" },
-                    body: JSON.stringify({ inputs: input, history: chatHistory })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    let botReply = data.generated_text || "I'm not sure, but stay safe!";
-                    chatbox.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
-                    updateChatHistory(input, botReply);
-                    speak(botReply);
-                    chatbox.scrollTop = chatbox.scrollHeight;
-                })
-                .catch(() => {
-                    chatbox.innerHTML += `<p><strong>Bot:</strong> Sorry, I couldn't process that.</p>`;
-                });
+                const answers = await qna.answer({ query: input });
+                let botReply = answers.length ? answers[0].text : "I'm not sure, but stay safe!";
 
+                chatbox.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
+                speak(botReply);
+                chatbox.scrollTop = chatbox.scrollHeight;
                 document.getElementById("userInput").value = "";
             }
         }
@@ -120,15 +114,24 @@
             window.speechSynthesis.speak(speech);
         }
 
-        // Load chat history on page load
-        window.onload = function() {
-            let chatbox = document.getElementById("chatbox");
-            chatHistory.forEach(chat => {
-                chatbox.innerHTML += `<p><strong>You:</strong> ${chat.user}</p>`;
-                chatbox.innerHTML += `<p><strong>Bot:</strong> ${chat.bot}</p>`;
-            });
-            chatbox.scrollTop = chatbox.scrollHeight;
-        };
+        async function startSignRecognition() {
+            const video = document.getElementById("video");
+            video.style.display = "block";
+
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+
+            const model = await handpose.load();
+            setInterval(async () => {
+                const predictions = await model.estimateHands(video);
+                if (predictions.length > 0) {
+                    document.getElementById("userInput").value = "Help"; // Example for testing
+                    sendMessage();
+                }
+            }, 3000);
+        }
+
+        loadAI();
     </script>
 
 </body>
