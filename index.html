@@ -45,11 +45,11 @@
 <body>
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <a href="#">🏠 Home</a>
-        <a href="#">🗺️ Map</a>
-        <a href="#">🤖 AI Chatbot</a>
-        <a href="#">📞 Emergency Contacts</a>
-        <a href="#">⚙️ Settings</a>
+        <a href="index.html">🏠 Home</a>
+        <a href="map.html">🗺️ Map</a>
+        <a href="chatbot.html">🤖 AI Chatbot</a>
+        <a href="contacts.html">📞 Emergency Contacts</a>
+        <a href="settings.html">⚙️ Settings</a>
     </div>
 
     <!-- Main Content -->
@@ -57,73 +57,57 @@
         <h1>Welcome to Safeable</h1>
         
         <div class="card">
-            <button class="live-map"><i>🗺️</i> Live Map</button>
+            <button class="feature-btn map-btn" onclick="navigateTo('map.html')">🗺️ Live Map</button>
         </div>
 
         <div class="card">
-            <button class="emergency-contacts"><i>📞</i> Emergency Contacts</button>
+            <button class="feature-btn contacts-btn" onclick="navigateTo('contacts.html')">📞 Emergency Contacts</button>
         </div>
 
         <div class="card">
-            <button class="ai-chatbot"><i>🤖</i> AI Chatbot</button>
+            <button class="feature-btn ai-btn" onclick="navigateTo('chatbot.html')">🤖 AI Chatbot</button>
         </div>
 
         <div class="card">
-            <button class="voice-commands"><i>🎤</i> Voice Commands</button>
+            <button class="feature-btn voice-btn" onclick="navigateTo('voice.html')">🎤 Voice Commands</button>
         </div>
 
         <div class="card">
-            <button class="privacy-settings"><i>🔒</i> Privacy & Settings</button>
+            <button class="feature-btn settings-btn" onclick="navigateTo('settings.html')">🔒 Privacy & Settings</button>
         </div>
     </div>
-    <script src="script.js">// Wait for the page to load
-document.addEventListener("DOMContentLoaded", function () {
-    // Add click event to buttons
-    document.querySelector(".live-map").addEventListener("click", function () {
-        window.location.href = "map.html";  // Change to your actual page
-    });
 
-    document.querySelector(".emergency-contacts").addEventListener("click", function () {
-        window.location.href = "contacts.html";  // Change this to your contacts page
-    });
-
-    document.querySelector(".ai-chatbot").addEventListener("click", function () {
-        window.location.href = "chatbot.html";  // Link to chatbot page
-    });
-
-    document.querySelector(".voice-commands").addEventListener("click", function () {
-        window.location.href = "voice.html";  // Link to voice commands page
-    });
-
-    document.querySelector(".privacy-settings").addEventListener("click", function () {
-        window.location.href = "settings.html";  // Link to settings page
-    });
-});
-</script>
-
+    <!-- JavaScript Code -->
     <script>
-const commands = {
-    "go to home": () => window.location.href = "index.html",
-    "open map": () => window.location.href = "map.html",
-    "open chatbot": () => window.location.href = "chatbot.html",
-    "open contacts": () => window.location.href = "contacts.html",
-    "open settings": () => window.location.href = "settings.html",
-    "help": () => alert("Say 'open map' to go to the map, 'open chatbot' to chat, etc."),
-};
+        // Function to navigate to different pages
+        function navigateTo(page) {
+            window.location.href = page;
+        }
 
-const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.lang = "en-US";
-recognition.continuous = true;
-recognition.start();
+        // Voice Commands
+        const commands = {
+            "go to home": () => navigateTo("index.html"),
+            "open map": () => navigateTo("map.html"),
+            "open chatbot": () => navigateTo("chatbot.html"),
+            "open contacts": () => navigateTo("contacts.html"),
+            "open settings": () => navigateTo("settings.html"),
+            "help": () => alert("Say 'open map' to go to the map, 'open chatbot' to chat, etc."),
+        };
 
-recognition.onresult = function(event) {
-    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
-    console.log("Voice Command:", transcript);
-    if (commands[transcript]) {
-        commands[transcript]();
-    }
-};
-</script>
+        // Initialize speech recognition
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.continuous = true;
+        recognition.start();
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+            console.log("Voice Command:", transcript);
+            if (commands[transcript]) {
+                commands[transcript]();
+            }
+        };
+    </script>
 
 </body>
 </html>
