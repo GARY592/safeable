@@ -1,29 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Contacts</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-            margin: 20px;
-        }
-        h2 {
-            color: #333;
-        }
-        #contacts-list {
-            list-style: none;
-            padding: 0;
-        }
-        .contact {
-            background: white;
-            padding: 10px;
-            margin: 10px auto;
-            width: 80%;
-            display: flex;
+      <style>
+        
             justify-content: space-between;
             align-items: center;
             border-radius: 5px;
@@ -46,7 +25,55 @@
         input, button {
             padding: 8px;
             margin: 5px;
-        }
+        }    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f4;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    #sosButton {
+        background: red;
+        color: white;
+    }
+
+    #sosSmsButton {
+        background: orange;
+        color: white;
+    }
+
+    #voiceButton {
+        background: blue;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
     </style>
 </head>
 <body>
