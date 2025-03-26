@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,49 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Safeable AI Chatbot</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 500px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #chatbox {
-            width: 100%;
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background: #fff;
-            text-align: left;
-        }
-        input {
-            width: 80%;
-            padding: 10px;
-        }
-        button {
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        video {
-            width: 100%;
-            display: none;
-        }
-    </style>
 </head>
 <body>
 
@@ -63,75 +21,82 @@
     </nav>
 
     <div class="container">
-        <h1>AI Chatbot (Offline + Sign Language)</h1>
+        <h1>AI Chatbot</h1>
         <div id="chatbox">
-            <p><strong>Bot:</strong> Hello! How can I assist you in this emergency?</p>
+            <p><strong>Bot:</strong> Hello! How can I assist you?</p>
         </div>
-        <input type="text" id="userInput" placeholder="Type or use sign language...">
+        <input type="text" id="userInput" placeholder="Type a message...">
         <button onclick="sendMessage()">Send</button>
-        <button onclick="startVoiceInput()">🎤 Voice</button>
-        <button onclick="startSignRecognition()">✋ Sign Language</button>
+        <button onclick="startVoiceCommand()">🎤 Voice Command</button>
     </div>
 
-    <video id="video" autoplay></video>
-
     <script>
-        async function loadAI() {
-            window.qna = await qna.load();
-            window.handpose = await handpose.load();
+        let model;
+
+        async function loadModel() {
+            model = await use.load();
+            console.log("AI Model Loaded!");
         }
 
-        async function sendMessage() {
-            var input = document.getElementById("userInput").value;
-            var chatbox = document.getElementById("chatbox");
+        async function chatbotResponse(userMessage) {
+            if (!model) {
+                return "AI is still loading...";
+            }
 
+            const embeddings = await model.embed([userMessage]);
+            const response = generateReply(userMessage); 
+            displayMessage("Bot", response);
+            speak(response);
+        }
+
+        function generateReply(input) {
+            input = input.toLowerCase();
+            if (input.includes("hello")) return "Hi! How can I assist you today?";
+            if (input.includes("help")) return "I can provide disaster updates, safe zone locations, and emergency contacts.";
+            if (input.includes("show map")) {
+                setTimeout(() => { window.location.href = "map.html"; }, 1000);
+                return "Opening the map...";
+            }
+            if (input.includes("call emergency")) {
+                setTimeout(() => { window.location.href = "tel:+112"; }, 1000);
+                return "Calling emergency contact...";
+            }
+            return "I'm still learning. Can you rephrase?";
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("userInput").value;
             if (input.trim() !== "") {
-                chatbox.innerHTML += `<p><strong>You:</strong> ${input}</p>`;
-
-                const answers = await qna.answer({ query: input });
-                let botReply = answers.length ? answers[0].text : "I'm not sure, but stay safe!";
-
-                chatbox.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
-                speak(botReply);
-                chatbox.scrollTop = chatbox.scrollHeight;
+                displayMessage("You", input);
+                chatbotResponse(input);
                 document.getElementById("userInput").value = "";
             }
         }
 
-        function startVoiceInput() {
-            var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = "en-US";
-            recognition.start();
-            recognition.onresult = function(event) {
-                document.getElementById("userInput").value = event.results[0][0].transcript;
-                sendMessage();
-            };
+        function displayMessage(sender, text) {
+            const chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += `<p><strong>${sender}:</strong> ${text}</p>`;
         }
 
         function speak(text) {
-            var speech = new SpeechSynthesisUtterance(text);
+            const speech = new SpeechSynthesisUtterance(text);
             speech.lang = "en-US";
             window.speechSynthesis.speak(speech);
         }
 
-        async function startSignRecognition() {
-            const video = document.getElementById("video");
-            video.style.display = "block";
+        function startVoiceCommand() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+            recognition.start();
 
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-
-            const model = await handpose.load();
-            setInterval(async () => {
-                const predictions = await model.estimateHands(video);
-                if (predictions.length > 0) {
-                    document.getElementById("userInput").value = "Help"; // Example for testing
-                    sendMessage();
-                }
-            }, 3000);
+            recognition.onresult = function(event) {
+                const command = event.results[0][0].transcript;
+                displayMessage("You (Voice)", command);
+                chatbotResponse(command);
+            };
         }
 
-        loadAI();
+        loadModel();
     </script>
 
 </body>
