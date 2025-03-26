@@ -1,19 +1,20 @@
-/* 🚀 PROFESSIONAL & FUTURISTIC UI UPGRADE 🌌 */
+/* 🌌 ULTIMATE SUPER LEGENDARY UI 🚀 */
 
-/* 🌑 Dark Mode with Subtle Gradient */
+/* 🌑 Dark Glassmorphic Background */
 body {
-    background: #121212; /* Deep dark */
-    font-family: 'Inter', sans-serif;
-    color: #e0e0e0;
+    background: linear-gradient(135deg, #121212, #1e1e1e);
+    font-family: 'Poppins', sans-serif;
+    color: white;
     text-align: center;
     padding: 20px;
 }
 
-/* 🔵 Navbar Styling */
+/* 🔵 Glassmorphic Navigation Bar */
 nav {
-    background: #1e1e1e;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
 }
 
@@ -21,7 +22,7 @@ nav ul {
     list-style: none;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 30px;
     padding: 0;
 }
 
@@ -31,56 +32,59 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: #b0b0b0;
+    color: #00d4ff;
+    font-size: 16px;
     font-weight: bold;
     transition: color 0.3s ease-in-out;
 }
 
 nav ul li a:hover {
-    color: #00d4ff;
+    color: #ff4b2b;
 }
 
-/* 📌 Suggestion Box */
+/* 📦 Suggestion Box with 3D Cards */
 #suggestion-box {
-    background: #1e1e1e;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 10px 30px rgba(0, 212, 255, 0.1);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 15px;
 }
 
-/* ✅ Buttons: Modern with Hover Effects */
+/* ✅ Buttons: Neumorphic & 3D */
 #suggestion-box button {
-    background: #00d4ff;
-    color: #121212;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
     font-size: 14px;
     font-weight: bold;
-    padding: 12px 16px;
-    border-radius: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0px 4px 10px rgba(0, 212, 255, 0.4);
+    box-shadow: 4px 4px 10px rgba(255, 255, 255, 0.1), -4px -4px 10px rgba(0, 0, 0, 0.5);
 }
 
 #suggestion-box button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0px 6px 15px rgba(0, 212, 255, 0.6);
+    transform: translateY(-4px);
+    box-shadow: 0px 6px 15px rgba(0, 212, 255, 0.5);
 }
 
-/* 📝 Chat Input Styling */
+/* 📝 Chat Input */
 #user-input {
     width: 80%;
     max-width: 600px;
-    padding: 12px;
-    font-size: 16px;
+    padding: 14px;
+    font-size: 18px;
     border: 2px solid #00d4ff;
-    background: #1e1e1e;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
     color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     outline: none;
     transition: 0.3s;
 }
@@ -93,17 +97,27 @@ nav ul li a:hover {
 #send-button {
     background: #ff4b2b;
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
-    padding: 12px 16px;
-    border-radius: 8px;
+    padding: 14px 20px;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0px 4px 10px rgba(255, 75, 59, 0.4);
+    box-shadow: 0px 4px 15px rgba(255, 75, 59, 0.5);
 }
 
 #send-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0px 6px 15px rgba(255, 75, 59, 0.6);
+    transform: translateY(-4px);
+    box-shadow: 0px 8px 20px rgba(255, 75, 59, 0.6);
+}
+
+/* 🌟 Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
 }
