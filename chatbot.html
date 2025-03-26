@@ -75,20 +75,22 @@
 }
 
 
-
-       async function sendMessage() {
+async function sendMessage() {
     const input = document.getElementById("userInput").value;
     if (input.trim() !== "") {
         displayMessage("You", input);
         const response = generateReply(input);
         
-        // Translate chatbot's response before displaying it
-        const translatedResponse = await translateText(response, "en"); // "es" = Spanish. Change to another language if needed.
-
-        displayMessage("Bot", translatedResponse);
+        // Speak response aloud
+        const speech = new SpeechSynthesisUtterance(response);
+        speech.lang = "en-US"; // Change this for different languages
+        window.speechSynthesis.speak(speech);
+        
+        displayMessage("Bot", response);
         document.getElementById("userInput").value = "";
     }
 }
+
 
         function displayMessage(sender, text) {
             const chatbox = document.getElementById("chatbox");
