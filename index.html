@@ -69,6 +69,19 @@ document.getElementById("contrastToggle").addEventListener("click", function() {
     document.body.classList.toggle("high-contrast");
 });
 </script>
+    <script>
+function speak(text) {
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US";
+    speech.rate = 1; 
+    speech.pitch = 1;
+    window.speechSynthesis.speak(speech);
+}
+
+// Read out welcome message when page loads
+window.onload = () => speak("Welcome to Safeable. Say 'help' to hear available voice commands.");
+</script>
+
 
 </body>
     <script>
