@@ -83,7 +83,7 @@
         const response = generateReply(input);
         
         // Translate chatbot's response before displaying it
-        const translatedResponse = await translateText(response, "es"); // "es" = Spanish. Change to another language if needed.
+        const translatedResponse = await translateText(response, "en"); // "es" = Spanish. Change to another language if needed.
 
         displayMessage("Bot", translatedResponse);
         document.getElementById("userInput").value = "";
