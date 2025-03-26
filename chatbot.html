@@ -50,19 +50,26 @@
         }
 
         function generateReply(input) {
-            input = input.toLowerCase();
-            if (input.includes("hello")) return "Hi! How can I assist you today?";
-            if (input.includes("help")) return "I can provide disaster updates, safe zone locations, and emergency contacts.";
-            if (input.includes("show map")) {
-                setTimeout(() => { window.location.href = "map.html"; }, 1000);
-                return "Opening the map...";
-            }
-            if (input.includes("call emergency")) {
-                setTimeout(() => { window.location.href = "tel:+112"; }, 1000);
-                return "Calling emergency contact...";
-            }
-            return "I'm still learning. Can you rephrase?";
-        }
+    input = input.toLowerCase();
+    
+    if (input.includes("hello")) return "Hi! How can I assist you today?";
+    if (input.includes("help")) return "I can provide disaster updates, safe zone locations, and emergency contacts.";
+    if (input.includes("emergency")) return "Stay calm! Should I call your emergency contact? Say 'Call Emergency' to proceed.";
+    if (input.includes("earthquake")) return "If you're indoors, drop, cover, and hold on. If outside, stay away from buildings.";
+    if (input.includes("flood")) return "Move to higher ground immediately. Avoid walking or driving through floodwaters.";
+    if (input.includes("fire")) return "Stay low to avoid smoke. Use the nearest exit and call emergency services.";
+    if (input.includes("safe zone")) return "Checking for safe zones near you... (Feature coming soon)";
+    if (input.includes("show map")) {
+        setTimeout(() => { window.location.href = "map.html"; }, 1000);
+        return "Opening the map...";
+    }
+    if (input.includes("call emergency")) {
+        setTimeout(() => { window.location.href = "tel:+112"; }, 1000);
+        return "Calling emergency contact...";
+    }
+    return "I'm still learning. Can you rephrase?";
+}
+
 
         function sendMessage() {
             const input = document.getElementById("userInput").value;
