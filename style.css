@@ -1,28 +1,30 @@
-/* 🌌 ULTIMATE SUPER LEGENDARY UI 🚀 */
+/* 🌟 Ultimate Modern UI for Safeable App */
 
-/* 🌑 Dark Glassmorphic Background */
 body {
-    background: linear-gradient(135deg, #121212, #1e1e1e);
+    background: radial-gradient(circle, #121212, #1e1e1e);
     font-family: 'Poppins', sans-serif;
     color: white;
     text-align: center;
     padding: 20px;
 }
 
-/* 🔵 Glassmorphic Navigation Bar */
+/* 🔥 Floating Glassmorphic Navbar */
 nav {
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
 }
 
 nav ul {
     list-style: none;
     display: flex;
-    justify-content: center;
-    gap: 30px;
+    gap: 25px;
     padding: 0;
 }
 
@@ -35,89 +37,56 @@ nav ul li a {
     color: #00d4ff;
     font-size: 16px;
     font-weight: bold;
-    transition: color 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 nav ul li a:hover {
+    background: rgba(255, 255, 255, 0.2);
     color: #ff4b2b;
 }
 
-/* 📦 Suggestion Box with 3D Cards */
-#suggestion-box {
+/* 📦 Modern Card with Soft Shadow */
+.container {
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0px 10px 30px rgba(0, 212, 255, 0.1);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
+    backdrop-filter: blur(20px);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 25px rgba(0, 212, 255, 0.15);
+    max-width: 500px;
+    margin: auto;
 }
 
-/* ✅ Buttons: Neumorphic & 3D */
-#suggestion-box button {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 12px 20px;
-    border-radius: 10px;
+/* 🔘 Rounded Buttons */
+button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 50px;
     border: none;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 4px 4px 10px rgba(255, 255, 255, 0.1), -4px -4px 10px rgba(0, 0, 0, 0.5);
-}
-
-#suggestion-box button:hover {
-    transform: translateY(-4px);
-    box-shadow: 0px 6px 15px rgba(0, 212, 255, 0.5);
-}
-
-/* 📝 Chat Input */
-#user-input {
-    width: 80%;
-    max-width: 600px;
-    padding: 14px;
-    font-size: 18px;
-    border: 2px solid #00d4ff;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-    color: white;
-    border-radius: 12px;
-    outline: none;
-    transition: 0.3s;
-}
-
-#user-input:focus {
-    border-color: #ff4b2b;
-}
-
-/* 🚀 Send Button */
-#send-button {
-    background: #ff4b2b;
-    color: white;
     font-size: 18px;
     font-weight: bold;
-    padding: 14px 20px;
-    border-radius: 12px;
-    border: none;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0px 4px 15px rgba(255, 75, 59, 0.5);
+    color: white;
 }
 
-#send-button:hover {
-    transform: translateY(-4px);
-    box-shadow: 0px 8px 20px rgba(255, 75, 59, 0.6);
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.2);
 }
 
-/* 🌟 Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+/* 🎨 Button Colors */
+.live-map { background: #007bff; }
+.emergency-contacts { background: #28a745; }
+.ai-chatbot { background: #ff4b2b; }
+.voice-commands { background: #ff9800; }
+.privacy-settings { background: #6c757d; }
 
-.fade-in {
-    animation: fadeIn 1s ease-in-out;
+/* 🦾 Accessibility Features */
+.high-contrast {
+    background: black;
+    color: yellow;
 }
