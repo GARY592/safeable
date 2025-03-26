@@ -1,81 +1,88 @@
 /* 🌟 Ultimate Modern UI for Safeable App */
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 body {
-    background: radial-gradient(circle, #121212, #1e1e1e);
+    background: linear-gradient(135deg, #1e1e1e, #2b2b2b);
     font-family: 'Poppins', sans-serif;
     color: white;
-    text-align: center;
-    padding: 20px;
+    display: flex;
+    height: 100vh;
+    margin: 0;
 }
 
-/* 🔥 Floating Glassmorphic Navbar */
-nav {
+/* 🌟 Sidebar Navigation */
+.sidebar {
+    width: 250px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.2);
+    padding: 20px;
     display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 40px;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 25px;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-}
-
-nav ul li a {
+.sidebar a {
     text-decoration: none;
     color: #00d4ff;
     font-size: 16px;
     font-weight: bold;
-    transition: all 0.3s ease-in-out;
-    padding: 10px;
+    padding: 15px 20px;
+    width: 100%;
+    text-align: center;
     border-radius: 10px;
+    transition: all 0.3s ease-in-out;
 }
 
-nav ul li a:hover {
+.sidebar a:hover {
     background: rgba(255, 255, 255, 0.2);
     color: #ff4b2b;
 }
 
-/* 📦 Modern Card with Soft Shadow */
-.container {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
+/* 🌟 Main Content */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0px 10px 25px rgba(0, 212, 255, 0.15);
-    max-width: 500px;
-    margin: auto;
 }
 
-/* 🔘 Rounded Buttons */
-button {
-    display: block;
-    width: 100%;
-    padding: 15px;
+/* 🌟 Cards for Buttons */
+.card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 25px rgba(0, 212, 255, 0.1);
+    width: 350px;
     margin: 10px 0;
-    border-radius: 50px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* 🌟 Buttons Inside Cards */
+.card button {
+    background: none;
     border: none;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
     color: white;
-}
-
-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 15px;
+    border-radius: 50px;
+    transition: all 0.3s ease-in-out;
 }
 
 /* 🎨 Button Colors */
@@ -85,8 +92,11 @@ button:hover {
 .voice-commands { background: #ff9800; }
 .privacy-settings { background: #6c757d; }
 
-/* 🦾 Accessibility Features */
-.high-contrast {
-    background: black;
-    color: yellow;
+.card button:hover {
+    opacity: 0.8;
+}
+
+/* 🔘 Icon Styling */
+.card button i {
+    margin-right: 10px;
 }
