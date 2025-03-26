@@ -4,86 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Safeable AI Chatbot</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
         }
         #chatbox {
-            width: 80%;
+            width: 100%;
             height: 300px;
-            border: 1px solid #ccc;
             overflow-y: auto;
-            margin: 20px auto;
+            border: 1px solid #ccc;
             padding: 10px;
+            background: #fff;
             text-align: left;
         }
-        input, button {
+        input {
+            width: 80%;
             padding: 10px;
-            margin: 5px;
+        }
+        button {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h2>Safeable AI Chatbot</h2>
-    <div id="chatbox"></div>
-    <input type="text" id="userInput" placeholder="Type your question...">
-    <button onclick="sendMessage()">Send</button>
-    <button onclick="startVoice()">🎤 Voice Command</button>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="chatbot.html">AI Chatbot</a></li>
+            <li><a href="contacts.html">Emergency Contacts</a></li>
+            <li><a href="settings.html">Settings</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>AI Chatbot (Self-Learning)</h1>
+        <div id="chatbox">
+            <p><strong>Bot:</strong> Hello! How can I assist you in this emergency?</p>
+        </div>
+        <input type="text" id="userInput" placeholder="Type or use voice...">
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="startVoiceInput()">🎤 Voice</button>
+    </div>
 
     <script>
-       const responses = {
-    "hello": "Hi! How can I assist you during an emergency?",
-    "help": "If you need immediate help, call emergency services (like 911) or go to the nearest shelter.",
-    
-    // 🚑 First Aid  
-    "bleeding": "Apply direct pressure with a clean cloth. If bleeding is severe, keep applying pressure and seek medical help.",
-    "fracture": "Do not move the injured limb. Immobilize it with a splint or a rolled-up newspaper.",
-    "burn": "Hold the burn under cool running water for 10 minutes. Do not apply ice or ointments.",
-    "cpr": "If the person is not breathing, start chest compressions: 30 pushes hard and fast in the center of the chest, then 2 rescue breaths.",
-    "choking": "If they can't breathe, perform the Heimlich maneuver: stand behind them and give quick, upward abdominal thrusts.",
-    
-    // 🌍 Natural Disasters  
-    "earthquake": "Drop to the ground, take cover under a sturdy object, and hold on until shaking stops.",
-    "fire": "Evacuate immediately. Stay low to avoid smoke. If trapped, signal for help from a window.",
-    "flood": "Move to higher ground. Do not walk or drive through floodwaters.",
-    "hurricane": "Secure loose objects, stay indoors, and avoid windows. Have an emergency kit ready.",
-    "tornado": "Go to a basement or interior room without windows. Cover yourself with a mattress or heavy blankets.",
-    
-    // 🆘 Emergency Tips  
-    "evacuation": "Know your nearest shelter location. Keep an emergency kit with food, water, and medical supplies.",
-    "emergency kit": "Your emergency kit should include food, water, flashlight, first-aid kit, and important documents.",
-    "finding shelter": "Look for official emergency shelters or community centers. If none are available, stay in a safe and secure building."
-};
+        // Load previous conversations from storage
+        let chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
 
-
-        function sendMessage() {
-            let input = document.getElementById("userInput").value.toLowerCase();
-            let chatbox = document.getElementById("chatbox");
-
-            chatbox.innerHTML += `<p><b>You:</b> ${input}</p>`;
-
-            let reply = responses[input] || "Sorry, I don’t understand. Try asking about first aid, fire, or earthquakes.";
-            chatbox.innerHTML += `<p><b>Bot:</b> ${reply}</p>`;
-
-            // Convert bot response to speech
-            let speech = new SpeechSynthesisUtterance(reply);
-            window.speechSynthesis.speak(speech);
-
-            document.getElementById("userInput").value = "";
+        function updateChatHistory(userMessage, botMessage) {
+            chatHistory.push({ user: userMessage, bot: botMessage });
+            if (chatHistory.length > 20) chatHistory.shift(); // Keep last 20 chats
+            localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
         }
 
-        function startVoice() {
-            let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.start();
+        function sendMessage() {
+            var input = document.getElementById("userInput").value;
+            var chatbox = document.getElementById("chatbox");
 
+            if (input.trim() !== "") {
+                chatbox.innerHTML += `<p><strong>You:</strong> ${input}</p>`;
+
+                fetch("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium", {
+                    method: "POST",
+                    headers: { "Authorization": "Bearer FREE_API_KEY", "Content-Type": "application/json" },
+                    body: JSON.stringify({ inputs: input, history: chatHistory })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let botReply = data.generated_text || "I'm not sure, but stay safe!";
+                    chatbox.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
+                    updateChatHistory(input, botReply);
+                    speak(botReply);
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                })
+                .catch(() => {
+                    chatbox.innerHTML += `<p><strong>Bot:</strong> Sorry, I couldn't process that.</p>`;
+                });
+
+                document.getElementById("userInput").value = "";
+            }
+        }
+
+        function startVoiceInput() {
+            var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+            recognition.start();
             recognition.onresult = function(event) {
-                let voiceInput = event.results[0][0].transcript.toLowerCase();
-                document.getElementById("userInput").value = voiceInput;
+                document.getElementById("userInput").value = event.results[0][0].transcript;
                 sendMessage();
             };
         }
+
+        function speak(text) {
+            var speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Load chat history on page load
+        window.onload = function() {
+            let chatbox = document.getElementById("chatbox");
+            chatHistory.forEach(chat => {
+                chatbox.innerHTML += `<p><strong>You:</strong> ${chat.user}</p>`;
+                chatbox.innerHTML += `<p><strong>Bot:</strong> ${chat.bot}</p>`;
+            });
+            chatbox.scrollTop = chatbox.scrollHeight;
+        };
     </script>
+
 </body>
 </html>
