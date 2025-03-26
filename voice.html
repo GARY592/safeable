@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safeable - Voice Commands</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>🎤 Voice Commands</h1>
+    <p>Say a command to navigate:</p>
+    <ul>
+        <li>"Go to home"</li>
+        <li>"Open map"</li>
+        <li>"Open chatbot"</li>
+        <li>"Open contacts"</li>
+        <li>"Open settings"</li>
+    </ul>
+
+    <button onclick="startListening()">🎤 Start Listening</button>
+    <p id="status">Status: Not Listening</p>
+
+    <script>
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+            recognition.start();
+
+            recognition.onstart = function () {
+                document.getElementById("status").innerText = "Status: Listening...";
+            };
+
+            recognition.onresult = function (event) {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                document.getElementById("status").innerText = "Recognized: " + transcript;
+
+                const commands = {
+                    "go to home": "index.html",
+                    "open map": "map.html",
+                    "open chatbot": "chatbot.html",
+                    "open contacts": "contacts.html",
+                    "open settings": "settings.html"
+                };
+
+                if (commands[transcript]) {
+                    window.location.href = commands[transcript];
+                } else {
+                    alert("Unknown command: " + transcript);
+                }
+            };
+        }
+    </script>
+</body>
+</html>
