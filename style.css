@@ -54,4 +54,20 @@ nav ul li a:hover {
     border: 2px solid white;
 }
 
+body {
+    font-size: 18px;
+}
+
+button {
+    font-size: 20px;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
 
