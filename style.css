@@ -78,3 +78,57 @@ input[type="checkbox"]:checked::before {
   color: #FF4D4D;
   font-weight: bold;
 }
+/* Style the buttons */
+button, .menu-item {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 12px; /* Makes buttons rounded */
+    border: none;
+    transition: 0.3s ease-in-out;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Improve colors */
+.menu-item:nth-child(1) { background-color: #007bff; } /* Blue */
+.menu-item:nth-child(2) { background-color: #28a745; } /* Green */
+.menu-item:nth-child(3) { background-color: #ff6347; } /* Red */
+.menu-item:nth-child(4) { background-color: #ffa500; } /* Orange */
+.menu-item:nth-child(5) { background-color: #6c757d; } /* Gray */
+
+/* Hover effect */
+button:hover, .menu-item:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: #222;
+    padding: 10px;
+    text-align: center;
+}
+
+.navbar a {
+    color: white;
+    font-size: 18px;
+    padding: 8px 15px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.navbar a:hover {
+    color: #ffa500;
+}
+
+/* Page Background */
+body {
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
