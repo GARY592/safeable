@@ -1,54 +1,55 @@
-/* Style the buttons */
-button, .menu-item {
-    display: block;
-    width: 90%;
-    margin: 10px auto;
-    padding: 15px;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 12px; /* Makes buttons rounded */
-    border: none;
-    transition: 0.3s ease-in-out;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+/* Emergency Contacts Page Styling */
+.contact-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Improve colors */
-.menu-item:nth-child(1) { background-color: #007bff; } /* Blue */
-.menu-item:nth-child(2) { background-color: #28a745; } /* Green */
-.menu-item:nth-child(3) { background-color: #ff6347; } /* Red */
-.menu-item:nth-child(4) { background-color: #ffa500; } /* Orange */
-.menu-item:nth-child(5) { background-color: #6c757d; } /* Gray */
+/* Input Fields */
+input[type="text"], button {
+    width: 90%;
+    margin: 10px auto;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    display: block;
+}
 
-/* Hover effect */
-button:hover, .menu-item:hover {
+/* Buttons */
+.contact-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    border-radius: 10px;
+    transition: 0.3s;
+    border: none;
+    margin: 5px auto;
+    width: 90%;
+}
+
+/* Button Colors */
+.call-button { background-color: #28a745; } /* Green */
+.delete-button { background-color: #dc3545; } /* Red */
+.sos-button { background-color: #ff4500; } /* Bright Red */
+.sos-sms-button { background-color: #ffa500; } /* Orange */
+
+/* Hover Effect */
+.contact-button:hover {
     transform: scale(1.05);
     opacity: 0.9;
 }
 
-/* Navigation Bar */
-.navbar {
-    background-color: #222;
-    padding: 10px;
-    text-align: center;
-}
-
-.navbar a {
-    color: white;
-    font-size: 18px;
-    padding: 8px 15px;
-    text-decoration: none;
-    transition: 0.3s;
-}
-
-.navbar a:hover {
-    color: #ffa500;
-}
-
 /* Page Background */
 body {
-    background-color: #f4f4f4;
+    background-color: #f8f9fa;
     font-family: Arial, sans-serif;
 }
