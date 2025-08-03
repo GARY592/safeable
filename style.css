@@ -63,8 +63,13 @@ input[type="text"]:focus {
 
 /* Page Background */
 body {
-    background-color: #f8f9fa;
-    font-family: 'Roboto', sans-serif;
+    body{
+            margin: 0;
+        padding: 0;
+        background-image: url(https://wallpapercave.com/wp/wp9054998.jpg);
+        background-size:cover;
+        box-sizing: border-box;
+        font-family: sans-serif;
 }
 
 /* General Enhancements */
