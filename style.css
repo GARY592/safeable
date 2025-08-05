@@ -63,13 +63,13 @@ input[type="text"]:focus {
 
 /* Page Background */
 body {
-    body{
-            margin: 0;
-        padding: 0;
-        background-image: url(https://wallpapercave.com/wp/wp9054998.jpg);
-        background-size:cover;
-        box-sizing: border-box;
-        font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url(https://wallpapercave.com/wp/wp9054998.jpg);
+    background-size: cover;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    background-color: red !important;
 }
 
 /* General Enhancements */
