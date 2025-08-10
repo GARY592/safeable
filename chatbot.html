@@ -1,155 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safeable AI Chatbot</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Safeable AI Chatbot</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="map.html">Map</a></li>
+      <li><a href="chatbot.html">AI Chatbot</a></li>
+      <li><a href="contacts.html">Emergency Contacts</a></li>
+      <li><a href="settings.html">Settings</a></li>
+    </ul>
+  </nav>
 
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="map.html">Map</a></li>
-            <li><a href="chatbot.html">AI Chatbot</a></li>
-            <li><a href="contacts.html">Emergency Contacts</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
-    </nav>
+  <div class="container" role="main" aria-labelledby="chatTitle">
+    <h1 id="chatTitle">AI Chatbot</h1>
 
-    <div class="container">
-        <h1>AI Chatbot</h1>
-        <div id="chatbox">
-            <p><strong>Bot:</strong> Hello! How can I assist you?</p>
-        </div>
-        <input type="text" id="userInput" placeholder="Speak or type your message...">
-<button id="voiceButton">🎤</button>
-<h2>Suggestions</h2>
-<div id="suggestion-box">
-    <button onclick="setSuggestion('What should I do during an earthquake?')">What should I do during an earthquake?</button>
-    <button onclick="setSuggestion('How do I prepare an emergency kit?')">How do I prepare an emergency kit?</button>
-    <button onclick="setSuggestion('How to perform CPR?')">How to perform CPR?</button>
-    <button onclick="setSuggestion('Where is the nearest shelter?')">Where is the nearest shelter?</button>
-    <button onclick="setSuggestion('How to stop severe bleeding?')">How to stop severe bleeding?</button>
-    <button onclick="setSuggestion('What supplies should I have for a power outage?')">What supplies should I have for a power outage?</button>
-    <button onclick="setSuggestion('How to evacuate with a wheelchair?')">How to evacuate with a wheelchair?</button>
-    <button onclick="setSuggestion('What are signs of hypothermia?')">What are signs of hypothermia?</button>
-    <button onclick="setSuggestion('How to purify water in an emergency?')">How to purify water in an emergency?</button>
-    <button onclick="setSuggestion('What to do during a tornado?')">What to do during a tornado?</button>
-</div>
-
-        <button onclick="sendMessage()">Send</button>
-        <button onclick="startVoiceCommand()">🎤 Voice Command</button>
+    <div id="chatbox" aria-live="polite" style="max-height: 300px; overflow:auto; border:1px solid #ddd; padding:10px; background:#fff;">
+      <p><strong>Bot:</strong> Hello! How can I assist you?</p>
     </div>
 
-    <script>
-        let model;
+    <div style="display:flex; gap:8px; margin-top:10px;">
+      <input type="text" id="userInput" placeholder="Speak or type your message..." style="flex:1; padding:8px;" />
+      <button id="voiceButton" aria-label="Voice input">🎤</button>
+      <button onclick="sendMessage()">Send</button>
+    </div>
 
-        async function loadModel() {
-            model = await use.load();
-            console.log("AI Model Loaded!");
-        }
+    <h2>Suggestions</h2>
+    <div id="suggestion-box" style="display:flex; flex-wrap:wrap; gap:8px;">
+      <button onclick="setSuggestion('What should I do during an earthquake?')">During earthquake</button>
+      <button onclick="setSuggestion('How do I prepare an emergency kit?')">Emergency kit</button>
+      <button onclick="setSuggestion('How to perform CPR?')">CPR</button>
+      <button onclick="setSuggestion('Where is the nearest shelter?')">Nearest shelter</button>
+      <button onclick="setSuggestion('How to stop severe bleeding?')">Stop bleeding</button>
+      <button onclick="setSuggestion('How to evacuate with a wheelchair?')">Evacuate with wheelchair</button>
+      <button onclick="setSuggestion('How to purify water in an emergency?')">Purify water</button>
+      <button onclick="setSuggestion('What to do during a tornado?')">During a tornado</button>
+    </div>
+  </div>
 
-        async function chatbotResponse(userMessage) {
-            if (!model) {
-                return "AI is still loading...";
-            }
-
-            const embeddings = await model.embed([userMessage]);
-            const response = generateReply(userMessage); 
-            displayMessage("Bot", response);
-            speak(response);
-        }
-
-        function generateReply(input) {
-    input = input.toLowerCase();
-    
-    if (input.includes("hello")) return "Hi! How can I assist you today?";
-    if (input.includes("help")) return "I can provide disaster updates, safe zone locations, and emergency contacts.";
-    if (input.includes("emergency")) return "Stay calm! Should I call your emergency contact? Say 'Call Emergency' to proceed.";
-    if (input.includes("earthquake")) return "If you're indoors, drop, cover, and hold on. If outside, stay away from buildings.";
-    if (input.includes("flood")) return "Move to higher ground immediately. Avoid walking or driving through floodwaters.";
-    if (input.includes("fire")) return "Stay low to avoid smoke. Use the nearest exit and call emergency services.";
-    if (input.includes("safe zone")) return "Checking for safe zones near you... (Feature coming soon)";
-    if (input.includes("show map")) {
-        setTimeout(() => { window.location.href = "map.html"; }, 1000);
-        return "Opening the map...";
-    }
-    if (input.includes("call emergency")) {
-        setTimeout(() => { window.location.href = "tel:+112"; }, 1000);
+  <script src="voiceCommands.js" defer></script>
+  <script>
+    // Simple rule-based reply function
+    function generateReply(input) {
+      const s = (input || "").toLowerCase();
+      if (s.includes("hello") || s.includes("hi")) return "Hi! How can I assist you today?";
+      if (s.includes("help")) return "I can provide disaster safety tips, safe zones, and emergency contacts.";
+      if (s.includes("earthquake")) return "If you're inside, drop, cover, and hold on. Move away from windows.";
+      if (s.includes("flood")) return "Move to higher ground immediately. Avoid floodwater.";
+      if (s.includes("fire")) return "Stay low to avoid smoke. Use the nearest exit.";
+      if (s.includes("safe zone") || s.includes("shelter")) return "Check the map page for nearby safe zones. (Feature coming soon)";
+      if (s.includes("call emergency")) {
+        setTimeout(() => { window.location.href = "tel:+112"; }, 800);
         return "Calling emergency contact...";
+      }
+      if (s.includes("wheelchair")) return "If you use a wheelchair, seek accessible exits and call for assistance.";
+      return "I'm still learning. Can you rephrase or try a suggestion?";
     }
-    return "I'm still learning. Can you rephrase?";
-} async function translateText(text, targetLang) {
-    const response = await fetch(`https://api.mymemory.translated.net/get?q=${text}&langpair=en|${targetLang}`);
-    const data = await response.json();
-    return data.responseData.translatedText;
-}
 
-
-async function sendMessage() {
-    const input = document.getElementById("userInput").value;
-    if (input.trim() !== "") {
-        displayMessage("You", input);
-        const response = generateReply(input);
-        
-        // Speak response aloud
-        const speech = new SpeechSynthesisUtterance(response);
-        speech.lang = "en-US"; // Change this for different languages
-        window.speechSynthesis.speak(speech);
-        
-        displayMessage("Bot", response);
-        document.getElementById("userInput").value = "";
+    // display message
+    function displayMessage(sender, text) {
+      const box = document.getElementById("chatbox");
+      box.innerHTML += `<p><strong>${sender}:</strong> ${text}</p>`;
+      box.scrollTop = box.scrollHeight;
     }
-}
 
+    // send message
+    function sendMessage() {
+      const inputEl = document.getElementById("userInput");
+      const text = inputEl.value.trim();
+      if (!text) return;
+      displayMessage("You", text);
+      const reply = generateReply(text);
+      displayMessage("Bot", reply);
+      speak(reply);
+      inputEl.value = "";
+    }
 
-        function displayMessage(sender, text) {
-            const chatbox = document.getElementById("chatbox");
-            chatbox.innerHTML += `<p><strong>${sender}:</strong> ${text}</p>`;
-        }
+    // suggestion helper
+    function setSuggestion(text) {
+      const inputEl = document.getElementById("userInput");
+      inputEl.value = text;
+      inputEl.focus();
+    }
 
-        function speak(text) {
-            const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = "en-US";
-            window.speechSynthesis.speak(speech);
-        }
+    // speech synthesis helper
+    function speak(text) {
+      try {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+      } catch (e) { console.warn("speak failed", e); }
+    }
 
-        function startVoiceCommand() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = "en-US";
-            recognition.start();
-
-            recognition.onresult = function(event) {
-                const command = event.results[0][0].transcript;
-                displayMessage("You (Voice)", command);
-                chatbotResponse(command);
-            };
-        }
-        document.getElementById("voiceButton").addEventListener("click", function() {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "en-US"; 
-    recognition.start();
-    
-    recognition.onresult = function(event) {
+    // voice input for chat
+    document.getElementById("voiceButton").addEventListener("click", function () {
+      if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+        alert("Speech recognition not supported in this browser.");
+        return;
+      }
+      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const rec = new Recognition();
+      rec.lang = "en-US";
+      rec.interimResults = false;
+      rec.start();
+      rec.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         document.getElementById("userInput").value = transcript;
-        sendMessage(); // Send the message automatically
-    };
-});
-
-
-        loadModel();
-    </script>
-<script src="voiceCommands.js"></script>
-<script>
-    function setSuggestion(text) {
-        document.getElementById("user-input").value = text;
-    }
-</script>
-
+        sendMessage();
+      };
+      rec.onerror = (e) => console.warn("voice chat error", e);
+    });
+  </script>
 </body>
 </html>
