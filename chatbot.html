@@ -1,85 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Safeable — Chatbot</title>
+<style>
+  :root{
+    --bg: #f7fafc;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --accent: #2563eb;   /* soft blue */
+    --accent-2: #10b981; /* soft green */
+    --bubble-user: #e6f4ea;
+    --bubble-bot: #eef2ff;
+    --radius: 12px;
+    --gap: 12px;
+  }
+
+  html,body{height:100%;margin:0;background:var(--bg);font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  .page {
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .card {
+    width:100%;
+    max-width:720px;
+    background:var(--card);
+    border-radius:16px;
+    box-shadow:0 8px 30px rgba(16,24,40,0.06);
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+    overflow:hidden;
+  }
+
+  /* Left: chat area */
+  .chat-area {
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .header {
+    font-weight:700;
+    color:#0f172a;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .sub { color:var(--muted); font-size:13px; margin-top:4px; }
+
+  .chat-window {
+    background:#fbfdff;
+    border:1px solid #eef2ff;
+    border-radius:12px;
+    padding:16px;
+    flex:1;
+    overflow:auto;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .msg { max-width:78%; padding:12px 14px; border-radius:12px; line-height:1.35; }
+  .msg.bot { background:var(--bubble-bot); color:#0f172a; align-self:flex-start; border-top-left-radius:4px; }
+  .msg.user { background:var(--bubble-user); color:#042a1b; align-self:flex-end; border-top-right-radius:4px; }
+
+  .controls {
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-top:8px;
+  }
+  .input {
+    flex:1;
+    display:flex;
+    gap:8px;
+  }
+  input[type="text"]{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid #e6edf3;
+    outline:none;
+    font-size:15px;
+  }
+  input[type="text"]:focus{ box-shadow:0 0 0 4px rgba(37,99,235,0.08); border-color:var(--accent); }
+
+  button.btn {
+    border:0;
+    background:var(--accent);
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    font-size:15px;
+  }
+  button.btn:active{ transform:translateY(1px); }
+
+  /* mic button style */
+  button.mic {
+    background:transparent;
+    border:1px solid #e6edf3;
+    padding:8px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+  button.mic[aria-pressed="true"]{ border-color:var(--accent); background: linear-gradient(90deg, rgba(37,99,235,0.06), rgba(16,185,129,0.02)); box-shadow:0 6px 18px rgba(16,24,40,0.06); }
+
+  .mic-dot { width:10px; height:10px; background:#ef4444; border-radius:50%; display:inline-block; opacity:0; transition:opacity .18s; }
+  button.mic[aria-pressed="true"] .mic-dot { opacity:1; background:var(--accent-2); }
+
+  /* Right column: suggestions */
+  .side {
+    padding:20px;
+    border-left:1px solid #f1f5f9;
+    background:linear-gradient(180deg,#fff,#fbfdff);
+  }
+  .side h4 { margin:0 0 8px 0; color:#0f172a; font-size:15px; }
+  .hint { color:var(--muted); font-size:13px; margin-bottom:12px; }
+  .suggestions { display:flex; flex-direction:column; gap:8px; }
+  .chip {
+    background:#f3f4f6;
+    border-radius:999px;
+    padding:8px 12px;
+    border:1px solid #e6edf3;
+    cursor:pointer;
+    font-size:14px;
+    color:#0f172a;
+    text-align:left;
+  }
+  .chip:active{ transform:translateY(1px); }
+
+  /* responsive: stack on small */
+  @media (max-width:880px){
+    .card{ grid-template-columns: 1fr; }
+    .side{ border-left:none; border-top:1px solid #f1f5f9; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="card" role="application" aria-label="Safeable Chatbot">
+      <section class="chat-area" aria-live="polite">
+        <div>
+          <div class="header">Safeable Chatbot</div>
+          <div class="sub">Ask disaster safety questions — text or press the mic to speak.</div>
+        </div>
+
+        <div class="chat-window" id="chatWindow" aria-live="polite" aria-atomic="false">
+          <!-- messages appear here -->
+        </div>
+
+        <div class="controls" role="group" aria-label="Message controls">
+          <div class="input" style="flex:1">
+            <input id="userInput" type="text" inputmode="text" placeholder="Type a question (e.g. 'earthquake')"
+                   aria-label="Type your message" />
+            <button class="btn" id="sendBtn" title="Send message">Send</button>
+          </div>
+
+          <button class="mic" id="micBtn" aria-pressed="false" title="Toggle voice input">
+            <span class="mic-dot" aria-hidden="true"></span>
+            <span style="font-weight:600;color:var(--muted);">Voice</span>
+          </button>
+        </div>
+      </section>
+
+      <aside class="side" aria-label="Suggestions and help">
+        <h4>Suggested questions</h4>
+        <div class="hint">Tap a suggestion to send it. Works with voice or text.</div>
+        <div class="suggestions" id="suggestionsList">
+          <button class="chip" data-s="hi">Hi</button>
+          <button class="chip" data-s="help">Help</button>
+          <button class="chip" data-s="first aid">First aid</button>
+          <button class="chip" data-s="earthquake">Earthquake</button>
+          <button class="chip" data-s="flood">Flood</button>
+          <button class="chip" data-s="cyclone">Cyclone</button>
+          <button class="chip" data-s="fire">Fire</button>
+        </div>
+        <p style="margin-top:14px;color:var(--muted);font-size:13px;">All replies are local, offline, and designed for quick guidance. In real emergencies call local services.</p>
+      </aside>
+    </div>
+  </div>
+
 <script>
-const chatBox = document.getElementById('chat-box');
+/* -------------------------
+  Chatbot: Offline rule-based
+   - Voice input (toggle)
+   - Text-to-speech (bot)
+   - Suggestions populate + send
+   - Enter to send
+--------------------------*/
 
-function appendMessage(message, sender) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add(sender === 'bot' ? 'bot-message' : 'user-message');
-    messageElement.textContent = message;
-    chatBox.appendChild(messageElement);
-    chatBox.scrollTop = chatBox.scrollHeight;
+const chatWindow = document.getElementById('chatWindow');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const micBtn = document.getElementById('micBtn');
+const suggestionsList = document.getElementById('suggestionsList');
+
+let recognition = null;
+let listening = false;
+
+// Ensure SpeechRecognition compatibility
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+
+// Predefined responses (easy to extend)
+function getBotResponse(text){
+  const t = (text || '').toLowerCase();
+  if(!t) return "Please type or say a question.";
+  if(t.includes('hi') || t.includes('hello')) return "Hello! How can I assist you today?";
+  if(t.includes('help')) return "I can provide quick safety tips for disasters (earthquake, flood, cyclone, fire) and basic first aid.";
+  if(t.includes('first aid') || t.includes('first-aid')) return "First aid: ensure scene safety, call emergency services, check breathing, control severe bleeding, and perform CPR if trained.";
+  if(t.includes('earthquake')) return "During an earthquake: drop, cover, and hold on. Stay away from windows and heavy objects. After shaking stops, move to an open area.";
+  if(t.includes('flood')) return "During a flood: move to higher ground, avoid walking or driving through flood waters, and follow evacuation orders.";
+  if(t.includes('cyclone') || t.includes('hurricane') || t.includes('storm')) return "For cyclones: stay indoors, secure windows, have an emergency kit, and follow official alerts.";
+  if(t.includes('fire')) return "If there is a fire: evacuate immediately, stay low to avoid smoke, stop, drop and roll if clothes catch fire, and call emergency services.";
+  if(t.includes('natural') && t.includes('disaster')) return "Stay calm, follow official guidance, and use your emergency kit. Contact local emergency services if you need help.";
+  return "I’m not sure about that. Try asking about earthquake, flood, cyclone, fire, or first aid.";
 }
 
-function speakMessage(message) {
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.lang = 'en-US';
-    speechSynthesis.speak(utterance);
+/* append message - preserves styling and announces bot replies */
+function appendMessage(text, who='bot'){
+  const el = document.createElement('div');
+  el.className = 'msg-wrapper';
+  const msg = document.createElement('div');
+  msg.className = who === 'user' ? 'msg user-message' : 'msg bot-message';
+  msg.textContent = text;
+  el.appendChild(msg);
+  chatWindow.appendChild(el);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  // If bot message, speak it
+  if(who === 'bot') speakText(text);
 }
 
-function getBotResponse(userText) {
-    const text = userText.toLowerCase();
-    let response = "Sorry, I didn’t understand that.";
-
-    if (text.includes("hi")) {
-        response = "Hello! How can I assist you today?";
-    } else if (text.includes("help")) {
-        response = "I can assist you with safety tips for disasters like earthquakes, floods, cyclones, and fires. You can also ask about first aid.";
-    } else if (text.includes("first aid")) {
-        response = "For basic first aid: Check responsiveness, call emergency services, stop bleeding, keep the injured person comfortable, and monitor breathing.";
-    } else if (text.includes("earthquake")) {
-        response = "During an earthquake: Drop, cover, and hold on. Stay indoors until the shaking stops.";
-    } else if (text.includes("flood")) {
-        response = "In case of a flood: Move to higher ground, avoid walking/driving through floodwaters, and listen to emergency alerts.";
-    } else if (text.includes("cyclone")) {
-        response = "For cyclones: Stay indoors, secure windows and doors, and keep an emergency kit ready.";
-    } else if (text.includes("fire")) {
-        response = "If there’s a fire: Evacuate immediately, stay low to avoid smoke, and call emergency services.";
-    }
-
-    return response;
+/* speak with cancellation to avoid overlap */
+function speakText(text){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+  }catch(e){}
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 1;
+  window.speechSynthesis.speak(u);
 }
 
-function sendMessage() {
-    const userInput = document.getElementById('user-input');
-    const userText = userInput.value.trim();
-    if (userText === "") return;
-
-    appendMessage(userText, 'user');
-    userInput.value = "";
-
-    const botResponse = getBotResponse(userText);
-    appendMessage(botResponse, 'bot');
-    speakMessage(botResponse);
+/* process user text (typed or recognized) */
+function processUser(text){
+  appendMessage(text, 'user');
+  const reply = getBotResponse(text);
+  // small delay to feel natural
+  setTimeout(()=> appendMessage(reply, 'bot'), 300);
 }
 
-function sendSuggestion(text) {
-    document.getElementById('user-input').value = text;
-    sendMessage();
+/* Send button / Enter key */
+sendBtn.addEventListener('click', ()=>{
+  const t = userInput.value.trim();
+  if(!t) return;
+  userInput.value = '';
+  processUser(t);
+});
+userInput.addEventListener('keypress', (e)=>{
+  if(e.key === 'Enter'){ e.preventDefault(); sendBtn.click(); }
+});
+
+/* suggestions clickable */
+suggestionsList.addEventListener('click', (ev)=>{
+  const btn = ev.target.closest('.chip');
+  if(!btn) return;
+  const text = btn.getAttribute('data-s');
+  // send text
+  processUser(text);
+});
+
+/* Voice recognition toggle */
+function startRecognition(){
+  if(!SpeechRec){
+    alert('Voice recognition not supported in this browser. Use Chrome on Android or a supported desktop browser.');
+    return;
+  }
+  recognition = new SpeechRec();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = ()=> {
+    listening = true;
+    micBtn.setAttribute('aria-pressed','true');
+  };
+  recognition.onresult = (ev)=>{
+    const transcript = ev.results[0][0].transcript;
+    processUser(transcript);
+  };
+  recognition.onerror = (err)=>{
+    console.warn('Speech recognition error', err);
+    appendMessage("I couldn't hear you clearly. Please try again.", 'bot');
+  };
+  recognition.onend = ()=>{
+    listening = false;
+    micBtn.setAttribute('aria-pressed','false');
+    // recognition ended — leave it until user toggles again
+  };
+  recognition.start();
 }
 
-function startVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("Sorry, your browser does not support voice recognition.");
-        return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.start();
-
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        appendMessage(transcript, 'user');
-        const botResponse = getBotResponse(transcript);
-        appendMessage(botResponse, 'bot');
-        speakMessage(botResponse);
-    };
-
-    recognition.onerror = function(event) {
-        alert("Voice recognition error: " + event.error);
-    };
+/* stop recognition if running */
+function stopRecognition(){
+  if(recognition){
+    try{ recognition.stop(); }catch(e){}
+    recognition = null;
+  }
+  listening = false;
+  micBtn.setAttribute('aria-pressed','false');
 }
+
+/* mic button toggles listening */
+micBtn.addEventListener('click', ()=>{
+  if(listening){
+    stopRecognition();
+  } else {
+    startRecognition();
+  }
+});
+
+/* initial welcome */
+window.addEventListener('load', ()=>{
+  appendMessage("Hello — I'm Safeable. Try: 'earthquake', 'flood', 'cyclone', 'fire', or 'first aid'.", 'bot');
+});
 </script>
+</body>
+</html>
