@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Accessible Disaster Safety Chatbot</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accessible Disaster Chatbot</title>
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f2f2f2;
+        background: #f4f4f4;
         margin: 0;
         padding: 0;
         display: flex;
@@ -16,133 +16,131 @@
         height: 100vh;
     }
     #chat-container {
-        background: white;
         width: 400px;
-        max-width: 95%;
+        background: white;
         border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
     #chat-box {
-        flex: 1;
-        padding: 10px;
+        height: 300px;
         overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #fafafa;
     }
     .message {
         margin: 5px 0;
-        padding: 8px;
-        border-radius: 5px;
     }
     .user {
-        background-color: #d1f7d6;
-        align-self: flex-end;
+        text-align: right;
+        color: blue;
     }
     .bot {
-        background-color: #e0e0e0;
-        align-self: flex-start;
+        text-align: left;
+        color: green;
     }
-    #input-area {
-        display: flex;
-        border-top: 1px solid #ccc;
-    }
-    #user-input {
-        flex: 1;
+    textarea {
+        width: calc(100% - 22px);
         padding: 10px;
-        border: none;
-        outline: none;
+        resize: none;
+        height: 50px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
     }
     button {
-        border: none;
         padding: 10px;
-        background: #4CAF50;
+        margin-top: 5px;
+        width: 100%;
+        background: #28a745;
         color: white;
+        border: none;
+        border-radius: 5px;
         cursor: pointer;
     }
     button:hover {
-        background: #45a049;
+        background: #218838;
     }
-    #mic-btn {
-        background: #ff5722;
-    }
-    #mic-btn:hover {
-        background: #e64a19;
+    #suggestion-box {
+        margin-top: 15px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: #f9f9f9;
     }
 </style>
 </head>
 <body>
+
 <div id="chat-container">
-    <div id="chat-box" aria-live="polite"></div>
-    <div id="input-area">
-        <input type="text" id="user-input" placeholder="Type your message..." aria-label="Type your message" />
-        <button id="mic-btn" title="Speak">🎤</button>
-        <button onclick="sendMessage()">Send</button>
+    <div id="chat-box"></div>
+    <textarea id="user-input" placeholder="Type your message here..."></textarea>
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="startVoiceRecognition()">🎤 Speak</button>
+    
+    <div id="suggestion-box">
+        <strong>Suggestions:</strong> hi, help, first aid, earthquake, flood, cyclone, fire
     </div>
 </div>
 
 <script>
-    const chatBox = document.getElementById("chat-box");
-    const userInput = document.getElementById("user-input");
-    const micBtn = document.getElementById("mic-btn");
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
 
-    // Predefined disaster safety dataset
+    // Predefined responses
     const responses = {
-        "earthquake": "During an earthquake, Drop, Cover, and Hold On. Stay away from windows.",
-        "flood": "In a flood, move to higher ground immediately. Avoid walking or driving through flood waters.",
-        "fire": "If there is a fire, evacuate immediately and call emergency services.",
-        "default": "I’m not sure about that, but always stay safe and follow local authority guidelines."
+        "hi": "Hello! How can I assist you today?",
+        "help": "I can guide you on disaster safety, first aid, and emergency contacts.",
+        "first aid": "For first aid: Stay calm, call emergency services, and provide basic care until help arrives.",
+        "earthquake": "During an earthquake: Drop, Cover, and Hold On. Stay indoors until the shaking stops.",
+        "flood": "During a flood: Move to higher ground immediately. Avoid walking or driving through flood waters.",
+        "cyclone": "During a cyclone: Stay indoors, away from windows, and listen to official alerts.",
+        "fire": "In case of fire: Evacuate immediately, stay low to avoid smoke, and call the fire department."
     };
 
-    function appendMessage(sender, text) {
-        const msg = document.createElement("div");
-        msg.classList.add("message", sender);
-        msg.textContent = text;
-        chatBox.appendChild(msg);
+    // Send message function
+    function sendMessage() {
+        const message = userInput.value.trim().toLowerCase();
+        if (message === "") return;
+
+        appendMessage("You: " + message, "user");
+        userInput.value = "";
+
+        let botResponse = responses[message] || "Sorry, I don't have information on that. Please try another keyword.";
+        appendMessage("Bot: " + botResponse, "bot");
+        speak(botResponse);
+    }
+
+    // Append messages to chat
+    function appendMessage(text, sender) {
+        const messageElement = document.createElement("div");
+        messageElement.className = `message ${sender}`;
+        messageElement.textContent = text;
+        chatBox.appendChild(messageElement);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+    // Voice recognition
+    function startVoiceRecognition() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.start();
+
+        recognition.onresult = function(event) {
+            const voiceInput = event.results[0][0].transcript.toLowerCase();
+            userInput.value = voiceInput;
+            sendMessage();
+        };
+    }
+
+    // Text to Speech
     function speak(text) {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = "en-US";
         speechSynthesis.speak(utterance);
     }
-
-    function getBotResponse(input) {
-        input = input.toLowerCase();
-        return responses[input] || responses["default"];
-    }
-
-    function sendMessage() {
-        const text = userInput.value.trim();
-        if (!text) return;
-        appendMessage("user", text);
-        userInput.value = "";
-
-        const botReply = getBotResponse(text);
-        appendMessage("bot", botReply);
-        speak(botReply); // Speak reply
-    }
-
-    // Voice input (Speech-to-Text)
-    micBtn.addEventListener("click", () => {
-        if (!('webkitSpeechRecognition' in window)) {
-            alert("Speech recognition not supported in this browser.");
-            return;
-        }
-        const recognition = new webkitSpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.start();
-
-        recognition.onresult = function(event) {
-            const voiceInput = event.results[0][0].transcript;
-            userInput.value = voiceInput;
-            sendMessage();
-        };
-        recognition.onerror = function() {
-            alert("Voice recognition error.");
-        };
-    });
 </script>
+
 </body>
 </html>
