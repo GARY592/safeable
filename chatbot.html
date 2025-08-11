@@ -3,109 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safeable - Chatbot</title>
+    <title>Safeable Chatbot</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            background: #f4f4f4;
             display: flex;
             flex-direction: column;
+            align-items: center;
             height: 100vh;
-        }
-        header {
-            background-color: #2a9d8f;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-size: 1.5em;
+            margin: 0;
         }
         #chat-container {
-            flex: 1;
+            width: 100%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            padding: 10px;
+            height: 80vh;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        }
+        #chat-box {
+            flex-grow: 1;
             overflow-y: auto;
-            background-color: #f4f4f4;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
         }
         .message {
             margin: 5px 0;
-            padding: 8px 12px;
-            border-radius: 10px;
-            max-width: 80%;
+            padding: 10px;
+            border-radius: 8px;
         }
         .user {
-            background-color: #0077b6;
-            color: white;
+            background: #d1e7dd;
             align-self: flex-end;
         }
         .bot {
-            background-color: #e9ecef;
+            background: #f8d7da;
             align-self: flex-start;
         }
         #input-container {
             display: flex;
-            padding: 10px;
-            background-color: #ddd;
+            margin-top: 10px;
         }
         #user-input {
             flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
         #send-btn {
-            padding: 8px 15px;
+            padding: 10px 15px;
             margin-left: 5px;
-            background-color: #2a9d8f;
-            color: white;
             border: none;
-            border-radius: 5px;
+            background: #0d6efd;
+            color: white;
+            border-radius: 8px;
             cursor: pointer;
         }
         #send-btn:hover {
-            background-color: #21867a;
+            background: #084298;
         }
     </style>
 </head>
 <body>
-    <header>Safeable Chatbot</header>
-    <div id="chat-container"></div>
+
+<div id="chat-container">
+    <div id="chat-box"></div>
     <div id="input-container">
-        <input type="text" id="user-input" placeholder="Type your message..." />
+        <input type="text" id="user-input" placeholder="Type your message...">
         <button id="send-btn">Send</button>
     </div>
+</div>
 
-    <script>
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
+<script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
 
-        function addMessage(message, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            msgDiv.innerText = message;
-            chatContainer.appendChild(msgDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+    function addMessage(text, sender) {
+        const message = document.createElement('div');
+        message.classList.add('message', sender);
+        message.textContent = text;
+        chatBox.appendChild(message);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function getBotResponse(input) {
+        input = input.toLowerCase();
+
+        if (input.includes("earthquake")) {
+            return "If an earthquake occurs: Drop, Cover, and Hold On. Stay away from windows.";
+        } else if (input.includes("flood")) {
+            return "In case of flood: Move to higher ground immediately and avoid walking through flood waters.";
+        } else if (input.includes("fire")) {
+            return "If there's a fire: Get low, stay out of smoke, and evacuate immediately.";
+        } else if (input.includes("first aid")) {
+            return "For first aid: Call emergency services and provide CPR if needed.";
+        } else if (input.includes("help")) {
+            return "I can assist with earthquake, flood, fire, and first aid safety tips.";
+        } else {
+            return "I'm not sure about that. Try asking about earthquake, flood, fire, or first aid.";
         }
+    }
 
-        function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
-            addMessage(message, 'user');
+    sendBtn.addEventListener('click', () => {
+        const input = userInput.value.trim();
+        if (input) {
+            addMessage(input, 'user');
+            const response = getBotResponse(input);
+            addMessage(response, 'bot');
             userInput.value = '';
-
-            // Simulated bot reply (replace with real backend later)
-            setTimeout(() => {
-                addMessage("I'm just a demo bot. You said: " + message, 'bot');
-            }, 500);
         }
+    });
 
-        sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-    </script>
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendBtn.click();
+        }
+    });
+</script>
+
 </body>
 </html>
