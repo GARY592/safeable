@@ -1,130 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safeable Chatbot</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        #chat-container {
-            width: 100%;
-            max-width: 500px;
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 80vh;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-        }
-        #chat-box {
-            flex-grow: 1;
-            overflow-y: auto;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .message {
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .user {
-            background: #d1e7dd;
-            align-self: flex-end;
-        }
-        .bot {
-            background: #f8d7da;
-            align-self: flex-start;
-        }
-        #input-container {
-            display: flex;
-            margin-top: 10px;
-        }
-        #user-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        #send-btn {
-            padding: 10px 15px;
-            margin-left: 5px;
-            border: none;
-            background: #0d6efd;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        #send-btn:hover {
-            background: #084298;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Accessible Disaster Safety Chatbot</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    #chat-container {
+        background: white;
+        width: 400px;
+        max-width: 95%;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    #chat-box {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+    }
+    .message {
+        margin: 5px 0;
+        padding: 8px;
+        border-radius: 5px;
+    }
+    .user {
+        background-color: #d1f7d6;
+        align-self: flex-end;
+    }
+    .bot {
+        background-color: #e0e0e0;
+        align-self: flex-start;
+    }
+    #input-area {
+        display: flex;
+        border-top: 1px solid #ccc;
+    }
+    #user-input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        outline: none;
+    }
+    button {
+        border: none;
+        padding: 10px;
+        background: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #45a049;
+    }
+    #mic-btn {
+        background: #ff5722;
+    }
+    #mic-btn:hover {
+        background: #e64a19;
+    }
+</style>
 </head>
 <body>
-
 <div id="chat-container">
-    <div id="chat-box"></div>
-    <div id="input-container">
-        <input type="text" id="user-input" placeholder="Type your message...">
-        <button id="send-btn">Send</button>
+    <div id="chat-box" aria-live="polite"></div>
+    <div id="input-area">
+        <input type="text" id="user-input" placeholder="Type your message..." aria-label="Type your message" />
+        <button id="mic-btn" title="Speak">🎤</button>
+        <button onclick="sendMessage()">Send</button>
     </div>
 </div>
 
 <script>
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
+    const chatBox = document.getElementById("chat-box");
+    const userInput = document.getElementById("user-input");
+    const micBtn = document.getElementById("mic-btn");
 
-    function addMessage(text, sender) {
-        const message = document.createElement('div');
-        message.classList.add('message', sender);
-        message.textContent = text;
-        chatBox.appendChild(message);
+    // Predefined disaster safety dataset
+    const responses = {
+        "earthquake": "During an earthquake, Drop, Cover, and Hold On. Stay away from windows.",
+        "flood": "In a flood, move to higher ground immediately. Avoid walking or driving through flood waters.",
+        "fire": "If there is a fire, evacuate immediately and call emergency services.",
+        "default": "I’m not sure about that, but always stay safe and follow local authority guidelines."
+    };
+
+    function appendMessage(sender, text) {
+        const msg = document.createElement("div");
+        msg.classList.add("message", sender);
+        msg.textContent = text;
+        chatBox.appendChild(msg);
         chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        speechSynthesis.speak(utterance);
     }
 
     function getBotResponse(input) {
         input = input.toLowerCase();
-
-        if (input.includes("earthquake")) {
-            return "If an earthquake occurs: Drop, Cover, and Hold On. Stay away from windows.";
-        } else if (input.includes("flood")) {
-            return "In case of flood: Move to higher ground immediately and avoid walking through flood waters.";
-        } else if (input.includes("fire")) {
-            return "If there's a fire: Get low, stay out of smoke, and evacuate immediately.";
-        } else if (input.includes("first aid")) {
-            return "For first aid: Call emergency services and provide CPR if needed.";
-        } else if (input.includes("help")) {
-            return "I can assist with earthquake, flood, fire, and first aid safety tips.";
-        } else {
-            return "I'm not sure about that. Try asking about earthquake, flood, fire, or first aid.";
-        }
+        return responses[input] || responses["default"];
     }
 
-    sendBtn.addEventListener('click', () => {
-        const input = userInput.value.trim();
-        if (input) {
-            addMessage(input, 'user');
-            const response = getBotResponse(input);
-            addMessage(response, 'bot');
-            userInput.value = '';
-        }
-    });
+    function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+        appendMessage("user", text);
+        userInput.value = "";
 
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendBtn.click();
+        const botReply = getBotResponse(text);
+        appendMessage("bot", botReply);
+        speak(botReply); // Speak reply
+    }
+
+    // Voice input (Speech-to-Text)
+    micBtn.addEventListener("click", () => {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("Speech recognition not supported in this browser.");
+            return;
         }
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.start();
+
+        recognition.onresult = function(event) {
+            const voiceInput = event.results[0][0].transcript;
+            userInput.value = voiceInput;
+            sendMessage();
+        };
+        recognition.onerror = function() {
+            alert("Voice recognition error.");
+        };
     });
 </script>
-
 </body>
 </html>
