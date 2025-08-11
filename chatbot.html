@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Safeable Chatbot</title>
+<title>Accessible Disaster Chatbot</title>
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f7f9fc;
+        background-color: #eef3f7;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -15,179 +15,146 @@
         margin: 0;
     }
     .chat-container {
-        width: 100%;
-        max-width: 500px;
-        background: #fff;
-        box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
-        border-radius: 12px;
+        background: white;
+        border-radius: 15px;
+        width: 400px;
+        max-width: 95%;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         display: flex;
         flex-direction: column;
         overflow: hidden;
     }
-    .chat-header {
-        background: #0078D7;
+    .header {
+        background: #0078d7;
         color: white;
         padding: 15px;
-        font-size: 18px;
+        font-size: 1.2em;
         text-align: center;
-        font-weight: bold;
     }
     .chat-box {
         padding: 15px;
-        height: 350px;
+        flex: 1;
         overflow-y: auto;
-        background: #f2f4f8;
     }
-    .bot-message, .user-message {
+    .message {
+        margin: 10px 0;
         padding: 10px;
-        margin: 8px 0;
         border-radius: 10px;
         max-width: 80%;
-        word-wrap: break-word;
-    }
-    .bot-message {
-        background: #e3f2fd;
-        align-self: flex-start;
     }
     .user-message {
-        background: #c8e6c9;
+        background: #0078d7;
+        color: white;
         align-self: flex-end;
     }
-    .chat-input {
+    .bot-message {
+        background: #f1f0f0;
+        align-self: flex-start;
+    }
+    .input-area {
         display: flex;
         border-top: 1px solid #ddd;
     }
-    .chat-input input {
+    .input-area input {
         flex: 1;
         border: none;
-        padding: 12px;
-        font-size: 16px;
+        padding: 10px;
+        font-size: 1em;
         outline: none;
     }
-    .chat-input button {
-        background: #0078D7;
+    .input-area button {
+        background: #0078d7;
         color: white;
         border: none;
-        padding: 12px;
+        padding: 10px 15px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 1.2em;
     }
     .suggestions {
         background: #f9f9f9;
         padding: 10px;
         border-top: 1px solid #ddd;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-    .suggestion-btn {
-        background: #e1e1e1;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: 0.3s;
-    }
-    .suggestion-btn:hover {
-        background: #ccc;
+        font-size: 0.9em;
+        text-align: center;
     }
 </style>
 </head>
 <body>
 
 <div class="chat-container">
-    <div class="chat-header">Safeable Chatbot</div>
+    <div class="header">Accessible Disaster Chatbot</div>
     <div class="chat-box" id="chat-box"></div>
-    
     <div class="suggestions">
-        <button class="suggestion-btn" onclick="sendSuggestion('earthquake')">Earthquake</button>
-        <button class="suggestion-btn" onclick="sendSuggestion('flood')">Flood</button>
-        <button class="suggestion-btn" onclick="sendSuggestion('cyclone')">Cyclone</button>
-        <button class="suggestion-btn" onclick="sendSuggestion('fire')">Fire</button>
-        <button class="suggestion-btn" onclick="sendSuggestion('first aid')">First Aid</button>
-        <button class="suggestion-btn" onclick="sendSuggestion('help')">Help</button>
-        <button class="suggestion-btn" onclick="sendSuggestion('hi')">Hi</button>
+        You can ask: <br> "Hi", "Help", "First aid", "Earthquake", "Flood", "Cyclone", "Fire"
     </div>
-    
-    <div class="chat-input">
-        <input type="text" id="user-input" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-        <button onclick="startVoiceRecognition()">🎤</button>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type or speak your message...">
+        <button id="voice-btn">🎤</button>
+        <button id="send-btn">➤</button>
     </div>
 </div>
 
 <script>
-const chatBox = document.getElementById('chat-box');
+const chatBox = document.getElementById("chat-box");
+const userInput = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+const voiceBtn = document.getElementById("voice-btn");
 
-function appendMessage(message, sender) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add(sender === 'bot' ? 'bot-message' : 'user-message');
-    messageElement.textContent = message;
-    chatBox.appendChild(messageElement);
+function addMessage(text, sender) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+    msg.textContent = text;
+    chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
+
+    if(sender === "bot") {
+        speak(text); // Speak bot messages
+    }
 }
 
-function speakMessage(message) {
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.lang = 'en-US';
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = 1;
     speechSynthesis.speak(utterance);
 }
 
-function getBotResponse(userText) {
-    const text = userText.toLowerCase();
-    let response = "Sorry, I didn’t understand that.";
+function getBotResponse(input) {
+    input = input.toLowerCase();
+    if (input.includes("hi")) return "Hello! How can I help you today?";
+    if (input.includes("help")) return "I can provide safety tips for disasters. Try asking about earthquakes, floods, cyclones, or fires.";
+    if (input.includes("first aid")) return "First aid tip: Check for breathing, control bleeding, and call emergency services immediately.";
+    if (input.includes("earthquake")) return "During an earthquake: Drop, Cover, and Hold On. Stay indoors until the shaking stops.";
+    if (input.includes("flood")) return "During a flood: Move to higher ground immediately and avoid walking or driving through flood water.";
+    if (input.includes("cyclone")) return "During a cyclone: Stay indoors, away from windows, and listen to official updates.";
+    if (input.includes("fire")) return "During a fire: Evacuate immediately, stay low to avoid smoke, and call emergency services.";
+    if (input.includes("natural disaster")) return "Stay calm, follow emergency guidelines, and ensure you have a safety kit ready.";
+    return "I'm not sure about that. Try asking about earthquakes, floods, cyclones, or fires.";
+}
 
-    if (text.includes("hi")) {
-        response = "Hello! How can I assist you today?";
-    } else if (text.includes("help")) {
-        response = "I can assist you with safety tips for disasters like earthquakes, floods, cyclones, and fires. You can also ask about first aid.";
-    } else if (text.includes("first aid")) {
-        response = "For basic first aid: Check responsiveness, call emergency services, stop bleeding, keep the injured person comfortable, and monitor breathing.";
-    } else if (text.includes("earthquake")) {
-        response = "During an earthquake: Drop, cover, and hold on. Stay indoors until the shaking stops.";
-    } else if (text.includes("flood")) {
-        response = "In case of a flood: Move to higher ground, avoid walking/driving through floodwaters, and listen to emergency alerts.";
-    } else if (text.includes("cyclone")) {
-        response = "For cyclones: Stay indoors, secure windows and doors, and keep an emergency kit ready.";
-    } else if (text.includes("fire")) {
-        response = "If there’s a fire: Evacuate immediately, stay low to avoid smoke, and call emergency services.";
+sendBtn.addEventListener("click", () => {
+    const text = userInput.value.trim();
+    if(text) {
+        addMessage(text, "user");
+        const botResponse = getBotResponse(text);
+        setTimeout(() => addMessage(botResponse, "bot"), 500);
+        userInput.value = "";
     }
+});
 
-    return response;
-}
-
-function sendMessage() {
-    const userInput = document.getElementById('user-input');
-    const userText = userInput.value.trim();
-    if (userText === "") return;
-
-    appendMessage(userText, 'user');
-    userInput.value = "";
-
-    const botResponse = getBotResponse(userText);
-    appendMessage(botResponse, 'bot');
-    speakMessage(botResponse);
-}
-
-function sendSuggestion(text) {
-    document.getElementById('user-input').value = text;
-    sendMessage();
-}
-
-function startVoiceRecognition() {
+// Voice input
+voiceBtn.addEventListener("click", () => {
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = "en-US";
     recognition.start();
 
     recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        appendMessage(transcript, 'user');
-        const botResponse = getBotResponse(transcript);
-        appendMessage(botResponse, 'bot');
-        speakMessage(botResponse);
+        const voiceText = event.results[0][0].transcript;
+        addMessage(voiceText, "user");
+        const botResponse = getBotResponse(voiceText);
+        setTimeout(() => addMessage(botResponse, "bot"), 500);
     };
-}
+});
 </script>
 
 </body>
