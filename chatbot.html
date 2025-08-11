@@ -3,109 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safeable Chatbot</title>
+    <title>Safeable - Chatbot</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-        }
-        .chat-container {
-            width: 400px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 0;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            height: 100vh;
         }
-        .chat-box {
+        header {
+            background-color: #2a9d8f;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+        #chat-container {
             flex: 1;
-            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
             overflow-y: auto;
-            max-height: 400px;
+            background-color: #f4f4f4;
         }
         .message {
-            margin-bottom: 10px;
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 80%;
         }
         .user {
-            text-align: right;
-            color: blue;
+            background-color: #0077b6;
+            color: white;
+            align-self: flex-end;
         }
         .bot {
-            text-align: left;
-            color: green;
+            background-color: #e9ecef;
+            align-self: flex-start;
         }
-        .input-area {
+        #input-container {
             display: flex;
-            border-top: 1px solid #ddd;
-        }
-        .input-area input {
-            flex: 1;
             padding: 10px;
-            border: none;
-            outline: none;
+            background-color: #ddd;
         }
-        .input-area button {
-            padding: 10px 15px;
-            background-color: #007BFF;
+        #user-input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        #send-btn {
+            padding: 8px 15px;
+            margin-left: 5px;
+            background-color: #2a9d8f;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
-        .input-area button:hover {
-            background-color: #0056b3;
+        #send-btn:hover {
+            background-color: #21867a;
         }
     </style>
 </head>
 <body>
-
-<div class="chat-container">
-    <div class="chat-box" id="chat-box">
-        <div class="message bot">Hello! I’m your Safeable chatbot. How can I help you today?</div>
+    <header>Safeable Chatbot</header>
+    <div id="chat-container"></div>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button id="send-btn">Send</button>
     </div>
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Type your message...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
-</div>
 
-<script>
-    function sendMessage() {
-        const userInput = document.getElementById("user-input");
-        const chatBox = document.getElementById("chat-box");
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
 
-        const message = userInput.value.trim();
-        if (message === "") return;
-
-        // Add user message
-        const userMessage = document.createElement("div");
-        userMessage.classList.add("message", "user");
-        userMessage.textContent = message;
-        chatBox.appendChild(userMessage);
-
-        // Simulate bot reply
-        const botMessage = document.createElement("div");
-        botMessage.classList.add("message", "bot");
-        botMessage.textContent = "You said: " + message; // Replace with AI logic later
-        chatBox.appendChild(botMessage);
-
-        chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll
-
-        userInput.value = ""; // Clear input
-    }
-
-    // Allow Enter key to send message
-    document.getElementById("user-input").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            sendMessage();
+        function addMessage(message, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.innerText = message;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-    });
-</script>
 
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            addMessage(message, 'user');
+            userInput.value = '';
+
+            // Simulated bot reply (replace with real backend later)
+            setTimeout(() => {
+                addMessage("I'm just a demo bot. You said: " + message, 'bot');
+            }, 500);
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
 </body>
 </html>
