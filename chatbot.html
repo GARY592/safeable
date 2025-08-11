@@ -7,112 +7,163 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f5f7fa;
-        margin: 0;
-        padding: 0;
+        background-color: #eef3f7;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
+        margin: 0;
     }
     .chat-container {
+        background: white;
+        border-radius: 15px;
         width: 400px;
-        background-color: #ffffff;
-        border-radius: 12px;
+        max-width: 95%;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         display: flex;
         flex-direction: column;
         overflow: hidden;
     }
+    .header {
+        background: #0078d7;
+        color: white;
+        padding: 15px;
+        font-size: 1.2em;
+        text-align: center;
+    }
     .chat-box {
+        padding: 15px;
         flex: 1;
-        padding: 16px;
         overflow-y: auto;
-        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
     }
     .message {
-        margin-bottom: 12px;
+        margin: 10px 0;
         padding: 10px;
-        border-radius: 8px;
+        border-radius: 10px;
         max-width: 80%;
-        line-height: 1.4;
+        word-wrap: break-word;
     }
     .user-message {
-        background-color: #d1e7ff;
+        background: #0078d7;
+        color: white;
         align-self: flex-end;
     }
     .bot-message {
-        background-color: #e6f4ea;
+        background: #f1f0f0;
         align-self: flex-start;
     }
     .input-area {
         display: flex;
-        padding: 12px;
-        background-color: #f9fafb;
+        border-top: 1px solid #ddd;
     }
-    input[type="text"] {
+    .input-area input {
         flex: 1;
+        border: none;
         padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 14px;
+        font-size: 1em;
+        outline: none;
     }
-    button {
-        margin-left: 8px;
-        padding: 10px 14px;
-        background-color: #007bff;
+    .input-area button {
+        background: #0078d7;
         color: white;
         border: none;
-        border-radius: 8px;
+        padding: 10px 15px;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 1.2em;
     }
-    button:hover {
-        background-color: #0056b3;
+    .suggestions {
+        background: #f9f9f9;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        font-size: 0.9em;
+        text-align: center;
     }
 </style>
 </head>
 <body>
+
 <div class="chat-container">
+    <div class="header">Accessible Disaster Chatbot</div>
     <div class="chat-box" id="chat-box"></div>
+    <div class="suggestions">
+        You can ask: <br> "Hi", "Help", "First aid", "Earthquake", "Flood", "Cyclone", "Fire"
+    </div>
     <div class="input-area">
-        <input type="text" id="user-input" placeholder="Type your message..." />
-        <button onclick="sendMessage()">Send</button>
+        <input type="text" id="user-input" placeholder="Type or speak your message...">
+        <button id="voice-btn" title="Voice Input">🎤</button>
+        <button id="send-btn" title="Send Message">➤</button>
     </div>
 </div>
+
 <script>
-    const chatBox = document.getElementById('chat-box');
+const chatBox = document.getElementById("chat-box");
+const userInput = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+const voiceBtn = document.getElementById("voice-btn");
 
-    function appendMessage(text, sender) {
-        const message = document.createElement('div');
-        message.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
-        message.textContent = text;
-        chatBox.appendChild(message);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
+function addMessage(text, sender) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+    msg.textContent = text;
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-    function sendMessage() {
-        const userInput = document.getElementById('user-input');
-        const text = userInput.value.trim();
-        if (text === '') return;
-        appendMessage(text, 'user');
-        userInput.value = '';
-        setTimeout(() => {
-            appendMessage(getBotResponse(text), 'bot');
-        }, 500);
+    if(sender === "bot") {
+        speak(text);
     }
+}
 
-    function getBotResponse(input) {
-        const lower = input.toLowerCase();
-        if (lower.includes('hi')) return 'Hello! You can ask me about earthquake, flood, cyclone, fire, or first aid.';
-        if (lower.includes('help')) return 'I can assist you with disaster safety tips and first aid guidance.';
-        if (lower.includes('earthquake')) return 'Drop, Cover, and Hold On! Stay indoors until shaking stops.';
-        if (lower.includes('flood')) return 'Move to higher ground immediately. Avoid walking or driving through flood waters.';
-        if (lower.includes('cyclone')) return 'Stay indoors, away from windows, and follow official updates.';
-        if (lower.includes('fire')) return 'Stay low to avoid smoke, and evacuate immediately if safe to do so.';
-        if (lower.includes('first aid')) return 'Check responsiveness, call emergency services, and provide CPR if trained.';
-        return 'Sorry, I am not sure about that. You can ask about disasters or first aid.';
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = 1;
+    speechSynthesis.speak(utterance);
+}
+
+function getBotResponse(input) {
+    input = input.toLowerCase();
+    if (input.includes("hi")) return "Hello! How can I help you today?";
+    if (input.includes("help")) return "I can provide safety tips for disasters. Try asking about earthquakes, floods, cyclones, or fires.";
+    if (input.includes("first aid")) return "First aid tip: Check for breathing, control bleeding, and call emergency services immediately.";
+    if (input.includes("earthquake")) return "During an earthquake: Drop, Cover, and Hold On. Stay indoors until the shaking stops.";
+    if (input.includes("flood")) return "During a flood: Move to higher ground immediately and avoid walking or driving through flood water.";
+    if (input.includes("cyclone")) return "During a cyclone: Stay indoors, away from windows, and listen to official updates.";
+    if (input.includes("fire")) return "During a fire: Evacuate immediately, stay low to avoid smoke, and call emergency services.";
+    if (input.includes("natural disaster")) return "Stay calm, follow emergency guidelines, and ensure you have a safety kit ready.";
+    return "I'm not sure about that. Try asking about earthquakes, floods, cyclones, or fires.";
+}
+
+function processUserMessage(text) {
+    addMessage(text, "user");
+    const botResponse = getBotResponse(text);
+    setTimeout(() => addMessage(botResponse, "bot"), 500);
+}
+
+sendBtn.addEventListener("click", () => {
+    const text = userInput.value.trim();
+    if(text) {
+        processUserMessage(text);
+        userInput.value = "";
     }
+});
+
+voiceBtn.addEventListener("click", () => {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+    recognition.start();
+
+    recognition.onresult = function(event) {
+        const voiceText = event.results[0][0].transcript;
+        processUserMessage(voiceText);
+    };
+
+    recognition.onerror = function() {
+        addMessage("Sorry, I couldn't hear you. Please try again.", "bot");
+    };
+});
 </script>
+
 </body>
 </html>
