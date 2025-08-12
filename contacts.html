@@ -1,80 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-      <style>
-        
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 5px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-        }
-        .contact button {
-            margin-left: 10px;
-            padding: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        .call-btn {
-            background: green;
-            color: white;
-        }
-        .delete-btn {
-            background: red;
-            color: white;
-        }
-        input, button {
-            padding: 8px;
-            margin: 5px;
-        }    body {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Contacts</title>
+<style>
+    body {
         font-family: Arial, sans-serif;
-        text-align: center;
-        background-color: #f4f4f4;
-    }
-
-    h1 {
-        color: #333;
-    }
-
-    .container {
-        max-width: 400px;
-        margin: auto;
         background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        color: #333;
+        text-align: center;
+        padding: 30px;
+        margin: 0;
     }
-
-    button {
-        display: block;
-        width: 100%;
+    h2 {
+        color: #4CAF50;
+        margin-bottom: 20px;
+    }
+    input {
         padding: 10px;
-        margin: 10px 0;
-        font-size: 18px;
+        margin: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: calc(100% - 24px);
+        max-width: 250px;
+    }
+    button {
+        padding: 10px 15px;
+        margin: 5px;
         border: none;
+        border-radius: 8px;
+        background: #4CAF50;
+        color: white;
         cursor: pointer;
-        border-radius: 5px;
+        transition: background 0.3s;
     }
-
-    #sosButton {
-        background: red;
-        color: white;
-    }
-
-    #sosSmsButton {
-        background: orange;
-        color: white;
-    }
-
-    #voiceButton {
-        background: blue;
-        color: white;
-    }
-
     button:hover {
-        opacity: 0.8;
+        background: #45a049;
     }
-
-    </style>
+    .contact-list {
+        max-width: 600px;
+        margin: 20px auto;
+        display: grid;
+        gap: 15px;
+    }
+    .contact-card {
+        background: #f5f5f5;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: left;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: background 0.3s, transform 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .contact-card:hover {
+        background: #d4edda;
+        transform: scale(1.02);
+    }
+    .contact-name {
+        font-weight: bold;
+        font-size: 18px;
+    }
+    .contact-info {
+        font-size: 14px;
+        color: #666;
+    }
+    .sos-buttons {
+        margin-top: 20px;
+    }
+    .call-btn, .delete-btn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+    .delete-btn {
+        background: #e74c3c;
+    }
+    .call-btn:hover {
+        background: #45a049;
+    }
+    .delete-btn:hover {
+        background: #c0392b;
+    }
+</style>
 </head>
 <body>
     <h2>Emergency Contacts 📞</h2>
@@ -83,18 +96,21 @@
     <input type="text" id="relation" placeholder="Relationship">
     <button onclick="addContact()">Add Contact</button>
 
-    <ul id="contacts-list"></ul>
-<button id="sosButton">🚨 SOS Call</button>
+    <div class="contact-list" id="contacts-list"></div>
 
-<button id="sosButton">🚨 SOS Call</button>
-<button id="sosSmsButton">📩 Send SOS SMS</button>
+    <div class="sos-buttons">
+        <button id="sosButton">🚨 SOS Call</button>
+        <button id="sosSmsButton">📩 Send SOS SMS</button>
+    </div>
 
 <script>
+    // SOS Call
     document.getElementById("sosButton").addEventListener("click", function() {
-        let emergencyNumber = "9344845765"; // Change for your country
+        let emergencyNumber = "9344845765"; // Change to your emergency number
         window.location.href = `tel:${emergencyNumber}`;
     });
 
+    // SOS SMS with location
     document.getElementById("sosSmsButton").addEventListener("click", function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -114,53 +130,56 @@
             alert("Geolocation is not supported on this device.");
         }
     });
-</script>
 
+    // Contact Management
+    let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
 
-    <script>
-        let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-
-        function displayContacts() {
-            let list = document.getElementById("contacts-list");
-            list.innerHTML = "";
-            contacts.forEach((contact, index) => {
-                list.innerHTML += `
-                    <li class="contact">
-                        <span>${contact.name} (${contact.relation}) - ${contact.phone}</span>
+    function displayContacts() {
+        let list = document.getElementById("contacts-list");
+        list.innerHTML = "";
+        contacts.forEach((contact, index) => {
+            list.innerHTML += `
+                <div class="contact-card">
+                    <div>
+                        <div class="contact-name">${contact.name} (${contact.relation})</div>
+                        <div class="contact-info">${contact.phone}</div>
+                    </div>
+                    <div>
                         <button class="call-btn" onclick="callContact('${contact.phone}')">📞 Call</button>
                         <button class="delete-btn" onclick="deleteContact(${index})">❌ Delete</button>
-                    </li>
-                `;
-            });
-        }
+                    </div>
+                </div>
+            `;
+        });
+    }
 
-        function addContact() {
-            let name = document.getElementById("name").value;
-            let phone = document.getElementById("phone").value;
-            let relation = document.getElementById("relation").value;
-            if (name && phone && relation) {
-                contacts.push({ name, phone, relation });
-                localStorage.setItem("contacts", JSON.stringify(contacts));
-                displayContacts();
-                document.getElementById("name").value = "";
-                document.getElementById("phone").value = "";
-                document.getElementById("relation").value = "";
-            } else {
-                alert("Please fill all fields.");
-            }
-        }
-
-        function deleteContact(index) {
-            contacts.splice(index, 1);
+    function addContact() {
+        let name = document.getElementById("name").value.trim();
+        let phone = document.getElementById("phone").value.trim();
+        let relation = document.getElementById("relation").value.trim();
+        if (name && phone && relation) {
+            contacts.push({ name, phone, relation });
             localStorage.setItem("contacts", JSON.stringify(contacts));
             displayContacts();
+            document.getElementById("name").value = "";
+            document.getElementById("phone").value = "";
+            document.getElementById("relation").value = "";
+        } else {
+            alert("Please fill all fields.");
         }
+    }
 
-        function callContact(phone) {
-            window.location.href = `tel:${phone}`;
-        }
-
+    function deleteContact(index) {
+        contacts.splice(index, 1);
+        localStorage.setItem("contacts", JSON.stringify(contacts));
         displayContacts();
-    </script>
+    }
+
+    function callContact(phone) {
+        window.location.href = `tel:${phone}`;
+    }
+
+    displayContacts();
+</script>
 </body>
 </html>
