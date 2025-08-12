@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Contacts</title>
+<style>
     body {
         font-family: Arial, sans-serif;
         background: white;
@@ -10,13 +13,34 @@
         padding: 30px;
         margin: 0;
     }
-    h1 {
+    h2 {
         color: #4CAF50;
         margin-bottom: 20px;
     }
+    input {
+        padding: 10px;
+        margin: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: calc(100% - 24px);
+        max-width: 250px;
+    }
+    button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 8px;
+        background: #4CAF50;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    button:hover {
+        background: #45a049;
+    }
     .contact-list {
         max-width: 600px;
-        margin: 0 auto;
+        margin: 20px auto;
         display: grid;
         gap: 15px;
     }
@@ -27,6 +51,9 @@
         text-align: left;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         transition: background 0.3s, transform 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     .contact-card:hover {
         background: #d4edda;
@@ -35,14 +62,32 @@
     .contact-name {
         font-weight: bold;
         font-size: 18px;
-        color: #333;
     }
     .contact-info {
         font-size: 14px;
         color: #666;
     }
+    .sos-buttons {
+        margin-top: 20px;
+    }
+    .call-btn, .delete-btn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+    .delete-btn {
+        background: #e74c3c;
+    }
+    .call-btn:hover {
+        background: #45a049;
+    }
+    .delete-btn:hover {
+        background: #c0392b;
+    }
 </style>
-
 </head>
 <body>
     <h2>Emergency Contacts 📞</h2>
@@ -51,18 +96,21 @@
     <input type="text" id="relation" placeholder="Relationship">
     <button onclick="addContact()">Add Contact</button>
 
-    <ul id="contacts-list"></ul>
-<button id="sosButton">🚨 SOS Call</button>
+    <div class="contact-list" id="contacts-list"></div>
 
-<button id="sosButton">🚨 SOS Call</button>
-<button id="sosSmsButton">📩 Send SOS SMS</button>
+    <div class="sos-buttons">
+        <button id="sosButton">🚨 SOS Call</button>
+        <button id="sosSmsButton">📩 Send SOS SMS</button>
+    </div>
 
 <script>
+    // SOS Call
     document.getElementById("sosButton").addEventListener("click", function() {
-        let emergencyNumber = "9344845765"; // Change for your country
+        let emergencyNumber = "9344845765"; // Change to your emergency number
         window.location.href = `tel:${emergencyNumber}`;
     });
 
+    // SOS SMS with location
     document.getElementById("sosSmsButton").addEventListener("click", function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -82,53 +130,56 @@
             alert("Geolocation is not supported on this device.");
         }
     });
-</script>
 
+    // Contact Management
+    let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
 
-    <script>
-        let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-
-        function displayContacts() {
-            let list = document.getElementById("contacts-list");
-            list.innerHTML = "";
-            contacts.forEach((contact, index) => {
-                list.innerHTML += `
-                    <li class="contact">
-                        <span>${contact.name} (${contact.relation}) - ${contact.phone}</span>
+    function displayContacts() {
+        let list = document.getElementById("contacts-list");
+        list.innerHTML = "";
+        contacts.forEach((contact, index) => {
+            list.innerHTML += `
+                <div class="contact-card">
+                    <div>
+                        <div class="contact-name">${contact.name} (${contact.relation})</div>
+                        <div class="contact-info">${contact.phone}</div>
+                    </div>
+                    <div>
                         <button class="call-btn" onclick="callContact('${contact.phone}')">📞 Call</button>
                         <button class="delete-btn" onclick="deleteContact(${index})">❌ Delete</button>
-                    </li>
-                `;
-            });
-        }
+                    </div>
+                </div>
+            `;
+        });
+    }
 
-        function addContact() {
-            let name = document.getElementById("name").value;
-            let phone = document.getElementById("phone").value;
-            let relation = document.getElementById("relation").value;
-            if (name && phone && relation) {
-                contacts.push({ name, phone, relation });
-                localStorage.setItem("contacts", JSON.stringify(contacts));
-                displayContacts();
-                document.getElementById("name").value = "";
-                document.getElementById("phone").value = "";
-                document.getElementById("relation").value = "";
-            } else {
-                alert("Please fill all fields.");
-            }
-        }
-
-        function deleteContact(index) {
-            contacts.splice(index, 1);
+    function addContact() {
+        let name = document.getElementById("name").value.trim();
+        let phone = document.getElementById("phone").value.trim();
+        let relation = document.getElementById("relation").value.trim();
+        if (name && phone && relation) {
+            contacts.push({ name, phone, relation });
             localStorage.setItem("contacts", JSON.stringify(contacts));
             displayContacts();
+            document.getElementById("name").value = "";
+            document.getElementById("phone").value = "";
+            document.getElementById("relation").value = "";
+        } else {
+            alert("Please fill all fields.");
         }
+    }
 
-        function callContact(phone) {
-            window.location.href = `tel:${phone}`;
-        }
-
+    function deleteContact(index) {
+        contacts.splice(index, 1);
+        localStorage.setItem("contacts", JSON.stringify(contacts));
         displayContacts();
-    </script>
+    }
+
+    function callContact(phone) {
+        window.location.href = `tel:${phone}`;
+    }
+
+    displayContacts();
+</script>
 </body>
 </html>
