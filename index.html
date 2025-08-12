@@ -5,89 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Safeable - Home</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: white;
-            color: #333;
-            text-align: center;
-            padding: 30px;
-        }
-        h1 {
-            color: #4CAF50;
-        }
-        .menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-        }
-        .menu a {
-            display: block;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #333;
-            transition: background 0.3s;
-        }
-        .menu a:hover {
-            background: #d4edda;
-        }
-        .voice-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            background: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-        .voice-btn:hover {
-            background: #45a049;
-        }
-    </style>
 </head>
 <body>
+    <header>
+        <h1>Safeable</h1>
+        <p>Accessibility-First Disaster Management App</p>
+    </header>
 
-    <h1>Welcome to Safeable</h1>
-    <p>Select a feature or use voice commands to open it.</p>
+    <main>
+        <nav>
+            <a href="ar.html">AR Navigation</a>
+            <a href="contacts.html">Emergency Contacts</a>
+            <a href="settings.html">Settings</a>
+            <a href="chatbot.html">AI Chatbot</a>
+            <a href="map.html">Live Map</a>
+            <a href="voice.html">Voice Commands</a>
+        </nav>
+    </main>
 
-    <div class="menu">
-        <a href="ar.html">AR Navigation</a>
-        <a href="contacts.html">Emergency Contacts</a>
-        <a href="settings.html">Settings</a>
-        <a href="map.html">Live Map</a>
-        <a href="voice.html">Voice Commands</a>
-        <a href="chatbot.html">AI Chatbot</a>
-    </div>
-
-    <button class="voice-btn" onclick="startVoiceCommand()">🎤 Use Voice Command</button>
+    <footer>
+        <p>© 2025 Safeable</p>
+    </footer>
 
     <script>
-        function startVoiceCommand() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert("Your browser doesn't support speech recognition. Try Chrome.");
+        // Always-listening voice commands
+        const commands = {
+            "open ar": "ar.html",
+            "open navigation": "ar.html",
+            "open contacts": "contacts.html",
+            "open settings": "settings.html",
+            "open chatbot": "chatbot.html",
+            "open map": "map.html",
+            "open live map": "map.html",
+            "open voice": "voice.html",
+            "open voice commands": "voice.html"
+        };
+
+        function startVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Your browser doesn't support Speech Recognition.");
                 return;
             }
 
-            const recognition = new webkitSpeechRecognition();
+            const recognition = new SpeechRecognition();
             recognition.lang = "en-US";
-            recognition.start();
+            recognition.continuous = true;
+            recognition.interimResults = false;
 
             recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript.toLowerCase();
-                if (transcript.includes("ar navigation")) window.location.href = "ar.html";
-                else if (transcript.includes("emergency contacts") || transcript.includes("contacts")) window.location.href = "contacts.html";
-                else if (transcript.includes("settings")) window.location.href = "settings.html";
-                else if (transcript.includes("map") || transcript.includes("live map")) window.location.href = "map.html";
-                else if (transcript.includes("voice commands") || transcript.includes("voice")) window.location.href = "voice.html";
-                else if (transcript.includes("chatbot") || transcript.includes("ai")) window.location.href = "chatbot.html";
-                else alert("Command not recognized. Please try again.");
-            };
-        }
-    </script>
+                const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                console.log("Heard:", transcript);
 
+                for (let key in commands) {
+                    if (transcript.includes(key)) {
+                        window.location.href = commands[key];
+                        break;
+                    }
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Speech recognition error:", event.error);
+            };
+
+            recognition.onend = function() {
+                // Restart listening automatically
+                recognition.start();
+            };
+
+            recognition.start();
+        }
+
+        window.onload = startVoiceRecognition;
+    </script>
 </body>
 </html>
