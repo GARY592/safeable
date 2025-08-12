@@ -3,87 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safeable - Disaster Management for All</title>
+    <title>Safeable - Home</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #ffffff;
+            background: white;
             color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        header {
             text-align: center;
-            padding: 1.5rem;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #ddd;
+            padding: 30px;
         }
-        header h1 {
-            margin: 0;
-            font-size: 2rem;
-            color: #0077b6;
+        h1 {
+            color: #4CAF50;
         }
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1rem;
-            background-color: #f1f1f1;
-            flex-wrap: wrap;
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
         }
-        nav a {
+        .menu a {
+            display: block;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
             text-decoration: none;
-            background: #0077b6;
-            color: white;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
+            color: #333;
             transition: background 0.3s;
         }
-        nav a:hover {
-            background: #005f86;
+        .menu a:hover {
+            background: #d4edda;
         }
-        main {
-            max-width: 900px;
-            margin: auto;
-            padding: 2rem;
-            text-align: center;
+        .voice-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
         }
-        main h2 {
-            color: #444;
-            margin-bottom: 1rem;
-        }
-        footer {
-            text-align: center;
-            padding: 1rem;
-            background-color: #f8f9fa;
-            border-top: 1px solid #ddd;
-            font-size: 0.9rem;
-            color: #666;
+        .voice-btn:hover {
+            background: #45a049;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Safeable</h1>
-        <p>Accessible Disaster Management for Everyone</p>
-    </header>
 
-    <nav>
-        <a href="chatbot.html">AI Chatbot</a>
-        <a href="map.html">Map</a>
-        <a href="weather.html">Weather</a>
+    <h1>Welcome to Safeable</h1>
+    <p>Select a feature or use voice commands to open it.</p>
+
+    <div class="menu">
+        <a href="ar.html">AR Navigation</a>
         <a href="contacts.html">Emergency Contacts</a>
-        <a href="firstaid.html">First Aid</a>
-    </nav>
+        <a href="settings.html">Settings</a>
+        <a href="map.html">Live Map</a>
+        <a href="voice.html">Voice Commands</a>
+        <a href="chatbot.html">AI Chatbot</a>
+    </div>
 
-    <main>
-        <h2>Welcome to Safeable</h2>
-        <p>Safeable helps people with disabilities during disasters by providing accessible navigation, emergency contacts, real-time alerts, and an AI-powered assistant.</p>
-    </main>
+    <button class="voice-btn" onclick="startVoiceCommand()">🎤 Use Voice Command</button>
 
-    <footer>
-        &copy; 2025 Safeable. All Rights Reserved.
-    </footer>
+    <script>
+        function startVoiceCommand() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Your browser doesn't support speech recognition. Try Chrome.");
+                return;
+            }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                if (transcript.includes("ar navigation")) window.location.href = "ar.html";
+                else if (transcript.includes("emergency contacts") || transcript.includes("contacts")) window.location.href = "contacts.html";
+                else if (transcript.includes("settings")) window.location.href = "settings.html";
+                else if (transcript.includes("map") || transcript.includes("live map")) window.location.href = "map.html";
+                else if (transcript.includes("voice commands") || transcript.includes("voice")) window.location.href = "voice.html";
+                else if (transcript.includes("chatbot") || transcript.includes("ai")) window.location.href = "chatbot.html";
+                else alert("Command not recognized. Please try again.");
+            };
+        }
+    </script>
+
 </body>
 </html>
